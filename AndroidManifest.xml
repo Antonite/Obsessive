@@ -7,12 +7,14 @@
     <uses-sdk
         android:minSdkVersion="11"
         android:targetSdkVersion="18" />
-	<uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
-        android:label="@string/app_name">
+        android:label="@string/app_name" >
         <activity
             android:name="polar.obsessive.gui.MainActivity"
             android:label="@string/app_name" >
@@ -21,6 +23,22 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name="polar.obsessive.ArFieldListActivity"
+            android:label="@string/title_arfield_list"
+            android:parentActivityName="polar.obsessive.gui.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="polar.obsessive.gui.MainActivity" />
+        </activity>
+        <activity
+            android:name="polar.obsessive.ArFieldDetailActivity"
+            android:label="@string/title_arfield_detail"
+            android:parentActivityName=".ArFieldListActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ArFieldListActivity" />
         </activity>
     </application>
 

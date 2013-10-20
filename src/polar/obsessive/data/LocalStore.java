@@ -58,7 +58,6 @@ public class LocalStore {
 			fis = new DataInputStream(c.openFileInput("artists.txt"));
 			
 			lastUpdate = fis.readLong();
-			
 			int count = fis.readInt();
 			for(int i=0; i < count; ++i) {
 				byte[] buf = new byte[fis.readInt()];
@@ -66,6 +65,7 @@ public class LocalStore {
 				String artist = new String(buf);
 				subscribedArtists.add(artist);
 				
+				buf = new byte[fis.readInt()];
 				fis.read(buf);
 				String img = new String(buf);
 				imgs.put(artist, img);

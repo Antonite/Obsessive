@@ -6,17 +6,25 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ArrayAdapter;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 import polar.obsessive.data.DataField;
+import polar.obsessive.data.DataField.DataItem;
 import polar.obsessive.data.LocalStore;
+
 
 public class ArFieldListFragment extends ListFragment {
 
@@ -26,7 +34,8 @@ public class ArFieldListFragment extends ListFragment {
 	
 	private int mActivatedPosition = ListView.INVALID_POSITION;
 
-	private ArrayAdapter<DataField.DataItem> content;
+	private LazyAdapter content;
+//	private ArrayAdapter<DataField.DataItem> content;
 	
 	private static boolean initialized = false;
 	private ProgressDialog progressDialog;
@@ -56,9 +65,12 @@ public class ArFieldListFragment extends ListFragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		content = new ArrayAdapter<DataField.DataItem>(getActivity(),
-				android.R.layout.simple_list_item_activated_1,
-				android.R.id.text1, DataField.ITEMS);
+		//content = new ArrayAdapter<DataField.DataItem>(getActivity(),
+		//		android.R.layout.simple_list_item_activated_1,
+		//		android.R.id.text1, DataField.ITEMS);
+		
+		content = new LazyAdapter(DataField.ITEMS);
+		
 		
 		setListAdapter(content);
 		
@@ -163,7 +175,7 @@ public class ArFieldListFragment extends ListFragment {
 	public void onCompleteTask(ArrayList<String[]> data) {
 		DataField.clear();
 		for(String[] arr : data) {
-			DataField.addItem(arr[1]);
+			DataField.addItem(arr[0],arr[1],arr[2]);
 		}
 		
 		content.notifyDataSetChanged();
@@ -205,4 +217,89 @@ public class ArFieldListFragment extends ListFragment {
 			ArFieldListFragment.this.onCompleteTask(result);
 		}
 	}
+	
+	public class LazyAdapter extends BaseAdapter {
+		 
+	    private List<DataItem> data;
+	    private LayoutInflater inflater=null;
+//	    public ImageLoader imageLoader;
+	 
+	    public LazyAdapter(List<DataItem> iTEMS) {
+	        data=iTEMS;
+	        inflater = (LayoutInflater)ArFieldListFragment.this.getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+	      //  imageLoader=new ImageLoader(activity.getApplicationContext());
+	    }
+	 
+	    public int getCount() {
+	        return data.size();
+	    }
+	 
+	    public Object getItem(int position) {
+	        return position;
+	    }
+	 
+	    public long getItemId(int position) {
+	        return position;
+	    }
+	 
+	    public View getView(int position, View convertView, ViewGroup parent) {
+	        View vi=convertView;
+	        if(convertView==null)
+	            vi = inflater.inflate(R.layout.list_row, null);
+	 
+	        TextView month = (TextView)vi.findViewById(R.id.month); 
+	        TextView day = (TextView)vi.findViewById(R.id.day); 
+	        TextView artist = (TextView)vi.findViewById(R.id.artist);
+	        TextView album = (TextView)vi.findViewById(R.id.album);
+//	        ImageView thumb_image = (ImageView)vi.findViewById(R.id.list_image);
+	 
+	        String date = data.get(position).date;
+	        String mon = date.substring(5,7);
+	        String dai = date.substring(8);
+	        String monStr = "";
+	        
+	        switch (Integer.parseInt(mon)) {
+            case 1:  monStr = "JAN";
+                     break;
+            case 2:  monStr = "FEB";
+                     break;
+            case 3:  monStr = "MAR";
+                     break;
+            case 4:  monStr = "APR";
+                     break;
+            case 5:  monStr = "MAY";
+                     break;
+            case 6:  monStr = "JUN";
+                     break;
+            case 7:  monStr = "JUL";
+                     break;
+            case 8:  monStr = "AUG";
+                     break;
+            case 9:  monStr = "SEP";
+                     break;
+            case 10: monStr = "OCT";
+                     break;
+            case 11: monStr = "NOV";
+                     break;
+            case 12: monStr = "DEC";
+                     break;
+            default: monStr = "UNF";
+                     break;
+	        }
+	        
+	        
+	        // Setting all values in listview
+	        month.setText(monStr);
+	        day.setText(dai);
+	        artist.setText(data.get(position).artist);
+	        album.setText(data.get(position).album);
+	        
+//	        NotificationHelper.convertURLtoDisplayBitmap(src)
+	        
+	      //  imageLoader.DisplayImage(song.get(CustomizedListView.KEY_THUMB_URL), thumb_image);
+	        return vi;
+	    }
+	}
+	
 }
+

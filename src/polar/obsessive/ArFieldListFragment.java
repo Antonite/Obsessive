@@ -87,6 +87,7 @@ public class ArFieldListFragment extends ListFragment {
 		} else {
 			onCompleteTask(LocalStore.cachedPage);
 		}
+		
 	}
 	
 	@Override
@@ -112,20 +113,6 @@ public class ArFieldListFragment extends ListFragment {
 					.getInt(STATE_ACTIVATED_POSITION));
 		}
 		
-		//ListView lv = (ListView) getListView().findViewById(R.id.arfield_list);
-		//registerForContextMenu(lv);
-	}
-	
-	@Override
-	public boolean onContextItemSelected(MenuItem item) {
-	    AdapterContextMenuInfo menuInfo = (AdapterContextMenuInfo) item 
-	            .getMenuInfo(); 
-	    switch (item.getItemId()) {
-	  case R.id.delete:
-		  Log.i("menu", "DELETE");
-	  default:
-	    return super.onContextItemSelected(item);
-	  }
 	}
 
 	@Override

@@ -4,9 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.List;
 
-import polar.obsessive.data.DataField.DataItem;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -15,12 +13,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v4.app.NotificationCompat;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 public class NotificationHelper {
 	
@@ -35,8 +27,9 @@ public class NotificationHelper {
 	// creates a notification with default app-icon in case IMG-URL was not found/not provided
 		public void notify(String contentTitle, String contentText, PendingIntent pIntent){
 			Intent intent = new Intent(mainContext, MainActivity.class);
-			if(pIntent == null)
+			if(pIntent == null) {
 				pIntent = PendingIntent.getActivity(mainContext, 0, intent, 0);
+			}
 			NotificationCompat.Builder builder = new NotificationCompat.Builder(mainContext);
 			builder.setSmallIcon(R.drawable.obsessive_icon);
 			builder.setContentTitle(contentTitle);
@@ -96,7 +89,7 @@ public class NotificationHelper {
                         connection.connect();
                         InputStream input = connection.getInputStream();
                         Bitmap myBitmap = BitmapFactory.decodeStream(input);
-                        myBitmap = Bitmap.createScaledBitmap(myBitmap, 96, 96, true);
+                        myBitmap = Bitmap.createScaledBitmap(myBitmap, 256, 256, true);
                         return myBitmap;
 
         }

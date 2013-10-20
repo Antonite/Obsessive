@@ -1,10 +1,12 @@
 package polar.obsessive;
 
+import polar.obsessive.gui.MainActivity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.NavUtils;
+import android.view.Menu;
 import android.view.MenuItem;
 
 /**
@@ -56,6 +58,12 @@ public class ArFieldListActivity extends FragmentActivity implements
 	}
 
 	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.main, menu);
+		return true;
+	}
+	
+	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case android.R.id.home:
@@ -98,5 +106,14 @@ public class ArFieldListActivity extends FragmentActivity implements
 		}
 	}
 	
+	@Override
+	public boolean onMenuItemSelected(int featureId, MenuItem item) {
+		switch(item.getItemId()) {
+		case R.id.action_settings:
+			startActivity(new Intent(ArFieldListActivity.this, SettingsActivity.class));
+			break;
+		}
+		return super.onMenuItemSelected(featureId, item);
+	}
 	
 }

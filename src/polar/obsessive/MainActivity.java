@@ -174,10 +174,8 @@ public class MainActivity extends FragmentActivity {
 		Log.e("STATE", state.toString());
 		
 	    if (state.isOpened()) {
-	    	Log.i("INFO", "Stuck Here...");
-	    	//startActivity(new Intent(MainActivity.this, ArFieldListActivity.class)); 
+	    	startActivity(new Intent(MainActivity.this, ArFieldListActivity.class)); 
 	    } else if (state.isClosed()) {
-	        Log.i("INFO", "Logged out...");
 	    }
 	}
 	

@@ -14,12 +14,12 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -64,19 +64,10 @@ public class ArFieldListFragment extends ListFragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		content = new LazyAdapter(DataField.ITEMS);
-		setListAdapter(content);
-		
-		// Fire async task
 		LocalStore.ensure(getActivity());
 		
-		if(LocalStore.cachedPage == null) {
-			ReadDataAsyncTask task = new ReadDataAsyncTask();
-			task.execute();
-			progressDialog = ProgressDialog.show(ArFieldListFragment.this.getActivity(), "", "Loading. Please wait...", true);
-		} else {
-			onCompleteTask(LocalStore.cachedPage);
-		}
+		content = new LazyAdapter();
+		setListAdapter(content);
 	}
 	
 	@Override
@@ -117,9 +108,11 @@ public class ArFieldListFragment extends ListFragment {
 	
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
+		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
 		switch(item.getItemId()) {
 		case MENU_DELETE:
-			//TODO: DELETE CODE GOES HERE
+			LocalStore.subscribedArtists.remove(info.position);
+			content.notifyDataSetChanged();
 			break;
 		}
 		return false;
@@ -187,66 +180,22 @@ public class ArFieldListFragment extends ListFragment {
 		mActivatedPosition = position;
 	}
 	
-	public void onCompleteTask(ArrayList<String[]> data) {
-		DataField.clear();
-		for(String[] arr : data) {
-			DataField.addItem(arr[0],arr[1],arr[2],arr[3]);
-		}
-		
+	public void updateList() {
 		content.notifyDataSetChanged();
-		
-		if(progressDialog != null) {
-			progressDialog.dismiss();
-		}
-	}
-	
-	private class ReadDataAsyncTask extends AsyncTask<String, Integer, ArrayList<String[]>> { 
-
-		public static final String remoteHost = "http://people.rit.edu/~rwl3564/obsession/data.txt";
-		
-		public ArrayList<String[]> doInBackground(String... host) {
-			try {	
-				ArrayList<String[]> result = new ArrayList<String[]>();
-				
-				BufferedReader bf = new BufferedReader(new InputStreamReader((new URL(remoteHost)).openStream()));
-				String line = bf.readLine();
-				while(line != null)
-				{
-					result.add(line.split(","));
-					line = bf.readLine();
-				}
-				bf.close();
-				return result;
-			} catch (MalformedURLException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			return null;
-		}
-		
-		@Override
-		protected void onPostExecute(ArrayList<String[]> result) {
-			super.onPostExecute(result);
-			LocalStore.cachedPage = result;
-			ArFieldListFragment.this.onCompleteTask(result);
-		}
 	}
 	
 	public class LazyAdapter extends BaseAdapter {
 		 
-	    private List<DataItem> data;
 	    private LayoutInflater inflater=null;
 //	    public ImageLoader imageLoader;
 	 
-	    public LazyAdapter(List<DataItem> iTEMS) {
-	        data=iTEMS;
+	    public LazyAdapter() {
 	        inflater = (LayoutInflater)ArFieldListFragment.this.getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 //	        imageLoader=new ImageLoader(activity.getApplicationContext());
 	    }
 	 
 	    public int getCount() {
-	        return data.size();
+	        return LocalStore.subscribedArtists.size();
 	    }
 	 
 	    public Object getItem(int position) {
@@ -265,9 +214,8 @@ public class ArFieldListFragment extends ListFragment {
 	        TextView artist = (TextView)vi.findViewById(R.id.artist);
 	        ImageView thumb_image = (ImageView)vi.findViewById(R.id.list_image);
 	 
-	        // Setting all values in listview
-	        artist.setText(data.get(position).artist);
-	        thumb_image.setImageBitmap(NotificationHelper.convertURLtoDisplayBitmap(data.get(position).url));
+	        artist.setText(LocalStore.subscribedArtists.get(position));
+	        //thumb_image.setImageBitmap(NotificationHelper.convertURLtoDisplayBitmap(data.get(position).url));
 	        return vi;
 	    }
 	}

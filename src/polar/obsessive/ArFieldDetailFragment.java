@@ -1,23 +1,18 @@
 package polar.obsessive;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
-import polar.obsessive.ArFieldListFragment.LazyAdapter;
 import polar.obsessive.data.DataField;
-import polar.obsessive.data.DataField.DataItem;
 
 /**
  * A fragment representing a single ArField detail screen. This fragment is

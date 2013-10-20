@@ -1,17 +1,24 @@
 package polar.obsessive;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+
+import polar.obsessive.data.DataField;
 import polar.obsessive.data.LocalStore;
 
 import com.facebook.Session;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.NavUtils;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
@@ -42,6 +49,8 @@ public class ArFieldListActivity extends FragmentActivity implements
 	private boolean mTwoPane;
 
 	public static boolean open = false;
+	
+	
 
 	@Override
 	public void onPause() {
@@ -52,7 +61,9 @@ public class ArFieldListActivity extends FragmentActivity implements
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		open = true;
+
 		super.onCreate(savedInstanceState);
+		
 		setContentView(R.layout.activity_arfield_list);
 
 		// Show the Up button in the action bar.
@@ -149,6 +160,13 @@ public class ArFieldListActivity extends FragmentActivity implements
 	        builder.setPositiveButton("Add", new DialogInterface.OnClickListener() {
 	            public void onClick(DialogInterface dialog, int id) {
 	            	LocalStore.subscribedArtists.add(input.getText().toString());
+	            	LocalStore.updates.put(input.getText().toString(), new ArrayList<LocalStore.Album>());
+	            	
+	            	ArFieldListFragment frag = ((ArFieldListFragment) getSupportFragmentManager().findFragmentById(R.id.arfield_list));
+	            	if(frag != null) {
+	            		frag.updateList();
+	            	}
+	            	
 	            }
 	        })
 	        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -163,5 +181,42 @@ public class ArFieldListActivity extends FragmentActivity implements
 	
 	@Override
 	public void onBackPressed() {
+	}
+	
+	public void onCompleteTask(ArrayList<String[]> data) {
+		//Send Notifications!
+	}
+	
+	private class ReadDataAsyncTask extends AsyncTask<String, Integer, ArrayList<String[]>> { 
+
+		public static final String remoteHost = "http://people.rit.edu/~rwl3564/obsession/data.txt";
+		
+		public ArrayList<String[]> doInBackground(String... host) {
+			try {	
+				ArrayList<String[]> result = new ArrayList<String[]>();
+				
+				BufferedReader bf = new BufferedReader(new InputStreamReader((new URL(remoteHost)).openStream()));
+				String line = bf.readLine();
+				while(line != null)
+				{
+					result.add(line.split(","));
+					line = bf.readLine();
+				}
+				bf.close();
+				return result;
+			} catch (MalformedURLException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			return null;
+		}
+		
+		@Override
+		protected void onPostExecute(ArrayList<String[]> result) {
+			super.onPostExecute(result);
+			LocalStore.cachedPage = result;
+			ArFieldListActivity.this.onCompleteTask(result);
+		}
 	}
 }

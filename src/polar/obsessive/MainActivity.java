@@ -4,19 +4,15 @@ package polar.obsessive;
 import java.util.Arrays;
 import java.util.Iterator;
 
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-
 import com.facebook.Request;
-
 import com.facebook.Response;
 import com.facebook.Session;
 import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
-
 import com.facebook.widget.LoginButton;
 
 import polar.obsessive.R;
@@ -28,15 +24,12 @@ import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
-import android.widget.TextView;
 
 public class MainActivity extends FragmentActivity {
 	
 	private NotificationHelper notifyMan;
-	private UiLifecycleHelper uiHelper;
 	private Cron cronTab;
-	
-	private TextView userInfoTextView;
+	private UiLifecycleHelper uiHelper;
 	
 	private Session.StatusCallback callback = new Session.StatusCallback() {
 	    @Override
@@ -67,17 +60,19 @@ public class MainActivity extends FragmentActivity {
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		cronTab = new Cron();
+		notifyMan = new NotificationHelper(this);
+		
 		super.onCreate(savedInstanceState);
 		StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
 		StrictMode.setThreadPolicy(policy);
-		cronTab = new Cron();
 		
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		
 		setContentView(R.layout.splash);
 
 		//setContentView(R.layout.activity_main);
-		notifyMan = new NotificationHelper(this);
+		
 
 		uiHelper = new UiLifecycleHelper(this, callback);
 		uiHelper.onCreate(savedInstanceState);

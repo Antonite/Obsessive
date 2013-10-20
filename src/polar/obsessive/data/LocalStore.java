@@ -41,7 +41,8 @@ public class LocalStore {
 			for(int i=0; i < count; ++i) {
 				byte[] buf = new byte[fis.readInt()];
 				fis.read(buf);
-				subscribedArtists.add(new String(buf));
+				String artist = new String(buf);
+				subscribedArtists.add(artist);
 			}
 			
 			if(lastUpdate + CACHE_TIME_DELAY < System.currentTimeMillis()) {

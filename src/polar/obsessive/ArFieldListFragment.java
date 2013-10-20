@@ -77,7 +77,6 @@ public class ArFieldListFragment extends ListFragment {
 		} else {
 			onCompleteTask(LocalStore.cachedPage);
 		}
-
 	}
 	
 	@Override

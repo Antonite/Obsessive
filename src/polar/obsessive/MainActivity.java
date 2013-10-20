@@ -108,10 +108,6 @@ public class MainActivity extends FragmentActivity {
 
 	
 	private void onSessionStateChange(Session session, SessionState state, Exception exception) {
-		
-		Log.e("STATE", state.toString());
-		
-
 	    if (state.isOpened() && !ArFieldListActivity.open) {
 	    	ArFieldListActivity.open = true;
 	    	startActivity(new Intent(MainActivity.this, ArFieldListActivity.class)); 

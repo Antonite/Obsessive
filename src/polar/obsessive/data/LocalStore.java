@@ -12,9 +12,9 @@ import android.content.Context;
 public class LocalStore {
 	
 	public static class Album {
-		String date;
-		String title;
-		String img;
+		public String date;
+		public String title;
+		public String img;
 	}
 	
 	private final static long CACHE_TIME_DELAY = 10*60*1000; 

@@ -7,7 +7,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
-import polar.obsessive.data.DataField;
 import polar.obsessive.data.LocalStore;
 
 import com.facebook.Session;
@@ -49,8 +48,6 @@ public class ArFieldListActivity extends FragmentActivity implements
 	private boolean mTwoPane;
 
 	public static boolean open = false;
-	
-	
 
 	@Override
 	public void onPause() {
@@ -61,7 +58,7 @@ public class ArFieldListActivity extends FragmentActivity implements
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		open = true;
-
+		
 		super.onCreate(savedInstanceState);
 		
 		setContentView(R.layout.activity_arfield_list);
@@ -112,13 +109,13 @@ public class ArFieldListActivity extends FragmentActivity implements
 	 * that the item with the given ID was selected.
 	 */
 	@Override
-	public void onItemSelected(String id) {
+	public void onItemSelected(String artist) {
 		if (mTwoPane) {
 			// In two-pane mode, show the detail view in this activity by
 			// adding or replacing the detail fragment using a
 			// fragment transaction.
 			Bundle arguments = new Bundle();
-			arguments.putString(ArFieldDetailFragment.ARG_ITEM_ID, id);
+			arguments.putString(ArFieldDetailFragment.ARG_ITEM_ID, artist);
 			ArFieldDetailFragment fragment = new ArFieldDetailFragment();
 			fragment.setArguments(arguments);
 			getSupportFragmentManager().beginTransaction()
@@ -128,7 +125,7 @@ public class ArFieldListActivity extends FragmentActivity implements
 			// In single-pane mode, simply start the detail activity
 			// for the selected item ID.
 			Intent detailIntent = new Intent(this, ArFieldDetailActivity.class);
-			detailIntent.putExtra(ArFieldDetailFragment.ARG_ITEM_ID, id);
+			detailIntent.putExtra(ArFieldDetailFragment.ARG_ITEM_ID, artist);
 			startActivity(detailIntent);
 		}
 	}

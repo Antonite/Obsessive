@@ -19,16 +19,12 @@ import polar.obsessive.R;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
-import android.view.View;
 import android.view.Window;
 
 public class MainActivity extends FragmentActivity {
 	
-	private NotificationHelper notifyMan;
-	private Cron cronTab;
+	
 	private UiLifecycleHelper uiHelper;
 	
 	private Session.StatusCallback callback = new Session.StatusCallback() {
@@ -38,30 +34,9 @@ public class MainActivity extends FragmentActivity {
 	    }
 	};
 	
-/*
- * REMOVE ME LATER	
- */
-
-	public void startCron(View v){
-		Log.i("alarm", "STARTING!!!");
-		cronTab.SetCron(this, 5);
-	}
-	
-	public void stopCron(View v){
-		Log.i("alarm", "ENDING!!!");
-		cronTab.CancelCron(this);
-	}
-	
-	public void testImage(View v){
-		Bitmap mBit = notifyMan.convertURLtoBitmap("http://www.eminemlab.com/images/wallpapers/Eminem-01-1024x768b.jpg");
-		notifyMan.notify("New Album!!", "Eminem is releasing a new Album on 11/25/2013!", mBit, null);
-	}
-	
-	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		cronTab = new Cron();
-		notifyMan = new NotificationHelper(this);
+		
 		
 		super.onCreate(savedInstanceState);
 		StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();

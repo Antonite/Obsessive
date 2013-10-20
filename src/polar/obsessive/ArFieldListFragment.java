@@ -23,7 +23,6 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import polar.obsessive.data.DataField;
 import polar.obsessive.data.LocalStore;
 
 
@@ -138,13 +137,9 @@ public class ArFieldListFragment extends ListFragment {
 	}
 
 	@Override
-	public void onListItemClick(ListView listView, View view, int position,
-			long id) {
+	public void onListItemClick(ListView listView, View view, int position, long id) {
 		super.onListItemClick(listView, view, position, id);
-
-		// Notify the active callbacks interface (the activity, if the
-		// fragment is attached to one) that an item has been selected.
-		mCallbacks.onItemSelected(DataField.ITEMS.get(position).id);
+		mCallbacks.onItemSelected(LocalStore.subscribedArtists.get(position));
 	}
 
 	@Override

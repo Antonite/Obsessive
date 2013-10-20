@@ -242,9 +242,9 @@ public class ArFieldListFragment extends ListFragment {
 	        TextView artist = (TextView)vi.findViewById(R.id.artist);
 	        ImageView thumb_image = (ImageView)vi.findViewById(R.id.list_image);
 	 
-	        artist.setText(LocalStore.subscribedArtists.get(position));
-	        //new URLtoBitmap(thumb_image).execute(data.get(position).url);
-	        new URLtoBitmap(thumb_image).execute("http://upload.wikimedia.org/wikipedia/en/6/64/John_Legend_Love_in_the_Future.jpg");
+	        String artistName = LocalStore.subscribedArtists.get(position);
+	        artist.setText(artistName);
+	        new URLtoBitmap(thumb_image).execute(LocalStore.imgs.get(artistName));
 	        
 	        return vi;
 	    }

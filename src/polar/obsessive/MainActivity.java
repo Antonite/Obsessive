@@ -16,10 +16,12 @@ import com.facebook.UiLifecycleHelper;
 import com.facebook.widget.LoginButton;
 
 import polar.obsessive.R;
+import polar.obsessive.data.LocalStore;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.Window;
 
 public class MainActivity extends FragmentActivity {
@@ -54,21 +56,6 @@ public class MainActivity extends FragmentActivity {
 
 		 LoginButton auth = (LoginButton)findViewById(R.id.login_button);
 		 auth.setReadPermissions(Arrays.asList("user_likes"));
-
-		 /*
-		 
-		 try {
-		        PackageInfo info = getPackageManager().getPackageInfo("polar.obsessive", PackageManager.GET_SIGNATURES);
-		        for (Signature signature : info.signatures) {
-		            MessageDigest md = MessageDigest.getInstance("SHA");
-		            md.update(signature.toByteArray());
-		            Log.e("KeyHash:", Base64.encodeToString(md.digest(), Base64.DEFAULT));
-		            }
-		    } catch (NameNotFoundException e) {
-
-		    } catch (NoSuchAlgorithmException e) {
-
-		    }*/
 	}
 	
 	
@@ -85,8 +72,13 @@ public class MainActivity extends FragmentActivity {
 	private void onSessionStateChange(Session session, SessionState state, Exception exception) {
 	    if (state.isOpened() && !ArFieldListActivity.open) {
 	    	ArFieldListActivity.open = true;
-	    	startActivity(new Intent(MainActivity.this, ArFieldListActivity.class)); 
-	    	makeMeRequest(session);
+
+	    	if(!LocalStore.exists(this)) {
+	    		LocalStore.init();
+	    		makeMeRequest(session);
+	    	}
+	    	
+	    	startActivity(new Intent(MainActivity.this, ArFieldListActivity.class));
 	    }
 	}
 	
@@ -181,8 +173,26 @@ public class MainActivity extends FragmentActivity {
 	            	
 	            	try {
 	            		
-	            		String username_title = a.get("username").toString();
-						String profile_pic = a.optJSONObject("cover").get("source").toString();
+	            		Log.i("JSON", a.toString());
+	            		
+	            		String username_title="", profile_pic="";
+	            		if (a.has("name")) {
+	            			username_title = a.get("name").toString();
+	            		} else if(a.has("username")) {
+	            			username_title = a.get("username").toString();
+	            		}
+	            		
+	            		if(a.has("cover")) {
+	            			profile_pic = a.optJSONObject("cover").get("source").toString();
+	            		} else {
+	            			profile_pic = "";
+	            		}
+				
+	            		if(username_title == "") {
+	            			return;
+	            		}
+						LocalStore.subscribedArtists.add(username_title);
+						LocalStore.imgs.put(username_title, profile_pic);
 						
 					} catch (JSONException e) {
 						// TODO Auto-generated catch block

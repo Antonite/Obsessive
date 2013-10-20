@@ -1,8 +1,6 @@
-package polar.obsessive.gui;
+package polar.obsessive;
 
-import polar.obsessive.ArFieldListActivity;
 import polar.obsessive.R;
-import polar.obsessive.SettingsActivity;
 import android.os.Bundle;
 import android.app.Activity;
 import android.app.Notification;
@@ -13,7 +11,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.util.Log;
 import android.view.View;
-import android.view.MenuItem;
 
 public class MainActivity extends Activity {
 	

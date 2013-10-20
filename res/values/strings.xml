@@ -4,7 +4,7 @@
     <string name="app_name">Obsessive</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
-    <string name="title_arfield_list">ArFields</string>
-    <string name="title_arfield_detail">ArField Detail</string>
+    <string name="title_arfield_list">Artists</string>
+    <string name="title_arfield_detail">Artists</string>
 
 </resources>

@@ -16,7 +16,7 @@
         android:icon="@drawable/obsessive_icon"
         android:label="@string/app_name" >
         <activity
-            android:name="polar.obsessive.gui.MainActivity"
+            android:name="polar.obsessive.MainActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -27,7 +27,7 @@
         <activity
             android:name="polar.obsessive.ArFieldListActivity"
             android:label="@string/title_arfield_list"
-            android:parentActivityName="polar.obsessive.gui.MainActivity" >
+            android:parentActivityName="polar.obsessive.MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="polar.obsessive.gui.MainActivity" />

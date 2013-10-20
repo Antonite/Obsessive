@@ -1,6 +1,5 @@
 package polar.obsessive;
 
-import polar.obsessive.gui.MainActivity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;

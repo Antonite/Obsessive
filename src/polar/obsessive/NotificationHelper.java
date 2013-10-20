@@ -19,6 +19,8 @@ public class NotificationHelper {
 	private NotificationManager notifyMan;
 	private Context mainContext;
 	
+	private static int nextId = 0;
+	
 	public NotificationHelper(Context myContext){
 		notifyMan = (NotificationManager) myContext.getSystemService(Context.NOTIFICATION_SERVICE);
 		mainContext = myContext;
@@ -42,7 +44,7 @@ public class NotificationHelper {
 		}
 		
 		// creates a notification with provided bitmap picture (album)
-		public void notify(String contentTitle, String contentText, Bitmap largeIcon, PendingIntent pIntent){
+		public void notify(int id, String contentTitle, String contentText, Bitmap largeIcon, PendingIntent pIntent){
 			Intent intent = new Intent(mainContext, MainActivity.class);
 			if(pIntent == null)
 				pIntent = PendingIntent.getActivity(mainContext, 0, intent, 0);
@@ -55,7 +57,7 @@ public class NotificationHelper {
 			// this imposes the pendingIntent onto the notification, acting as an eventhandler
 			builder.setContentIntent(pIntent);
 	        Notification n = builder.build();
-	        notifyMan.notify(0,n);
+	        notifyMan.notify(id,n);
 		}
 	
 	public Bitmap convertURLtoBitmap(String src) {

@@ -62,14 +62,11 @@ public class ArFieldListActivity extends FragmentActivity implements ArFieldList
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		open = true;
-		
-		AlarmManager am=(AlarmManager)this.getSystemService(Context.ALARM_SERVICE);
-	    Intent i = new Intent(this, FetchUpdateData.class);
-	    PendingIntent pi = PendingIntent.getBroadcast(this, 0, i, 0);
-	    am.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 1000 * 10 , pi); 
+		open = true; 
 		
 		super.onCreate(savedInstanceState);
+		
+		Cron.SetCron(this, 10);
 		
 		setContentView(R.layout.activity_arfield_list);
 
@@ -173,58 +170,5 @@ public class ArFieldListActivity extends FragmentActivity implements ArFieldList
 	public void onBackPressed() {
 	}
 		
-	public static class FetchUpdateData extends BroadcastReceiver {
-
-		private static final String remoteHost = "http://people.rit.edu/~rwl3564/obsession/data.txt";
-		
-		@Override
-		public void onReceive(Context c, Intent intent) {
-			try {
-				
-				Toast.makeText(c, "WHAT", Toast.LENGTH_SHORT).show();
-				
-				ArrayList<String[]> result = new ArrayList<String[]>();
-				
-				BufferedReader bf = new BufferedReader(new InputStreamReader((new URL(remoteHost)).openStream()));
-				String line = bf.readLine();
-				while(line != null)
-				{
-					result.add(line.split(","));
-					line = bf.readLine();
-				}
-				bf.close();
-				
-				LocalStore.ensure(c);
-				for(String[] arr : result) {
-					String date = arr[0];
-					String artist = arr[1];
-					String title = arr[2];
-					String img = arr[3];
-					
-					if(LocalStore.subscribedArtists.contains(artist))
-					{
-						ArrayList<Album> albums = LocalStore.updates.get(artist);
-						
-						if(albums == null) {
-							albums = new ArrayList<Album>();
-							LocalStore.updates.put(artist, albums);
-						}
-						
-						Album a = new Album();
-						a.date = date;
-						a.title = title;
-						a.img = img;
-						
-						albums.add(a);
-					}
-				}
-				LocalStore.save(c);
-			} catch (MalformedURLException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		
-	}
+	
 }

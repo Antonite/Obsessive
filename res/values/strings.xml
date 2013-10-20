@@ -11,5 +11,8 @@
     <string name="add_artist">Add Artist</string>
     <string name="action_settings">Settings</string>
     <string name="action_logout">Logout</string>
+    <string name="warning">This will permanently erase your data!!</string>
+    <string name="erase_data">Erase Data</string>
+    <string name="negative">NEGATIVE</string>
     
 </resources>

@@ -11,11 +11,20 @@
     android:background="@drawable/main_activity_gradient">
 
     <Button
-        android:id="@+id/button1"
+        android:id="@+id/notificationButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
+        android:layout_marginLeft="74dp"
+        android:layout_marginTop="81dp"
+        android:text="Button"
+        android:onClick="createNotification" />
+    
+	<Button
+        android:id="@+id/button1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="92dp"
         android:layout_marginTop="179dp"
         android:text="Anton"

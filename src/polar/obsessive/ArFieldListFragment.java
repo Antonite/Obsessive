@@ -1,51 +1,35 @@
 package polar.obsessive;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+
 import android.app.Activity;
+import android.app.ProgressDialog;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-
 import polar.obsessive.dummy.DummyContent;
 
-/**
- * A list fragment representing a list of ArFields. This fragment also supports
- * tablet devices by allowing list items to be given an 'activated' state upon
- * selection. This helps indicate which item is currently being viewed in a
- * {@link ArFieldDetailFragment}.
- * <p>
- * Activities containing this fragment MUST implement the {@link Callbacks}
- * interface.
- */
 public class ArFieldListFragment extends ListFragment {
 
-	/**
-	 * The serialization (saved instance state) Bundle key representing the
-	 * activated item position. Only used on tablets.
-	 */
 	private static final String STATE_ACTIVATED_POSITION = "activated_position";
 
-	/**
-	 * The fragment's current callback object, which is notified of list item
-	 * clicks.
-	 */
 	private Callbacks mCallbacks = sDummyCallbacks;
-
-	/**
-	 * The current activated item position. Only used on tablets.
-	 */
+	
 	private int mActivatedPosition = ListView.INVALID_POSITION;
 
-	/**
-	 * A callback interface that all activities containing this fragment must
-	 * implement. This mechanism allows activities to be notified of item
-	 * selections.
-	 */
+	private ArrayAdapter<DummyContent.DummyItem> content;
+	
+	private ProgressDialog progressDialog;
+	
 	public interface Callbacks {
-		/**
-		 * Callback for when an item has been selected.
-		 */
 		public void onItemSelected(String id);
 	}
 
@@ -70,10 +54,18 @@ public class ArFieldListFragment extends ListFragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		// TODO: replace with a real list adapter.
-		setListAdapter(new ArrayAdapter<DummyContent.DummyItem>(getActivity(),
+		content = new ArrayAdapter<DummyContent.DummyItem>(getActivity(),
 				android.R.layout.simple_list_item_activated_1,
-				android.R.id.text1, DummyContent.ITEMS));
+				android.R.id.text1, DummyContent.ITEMS);
+		
+		setListAdapter(content);
+		
+		// Fire async task
+		ReadDataAsyncTask task = new ReadDataAsyncTask();
+		task.execute();
+		
+		// Start InProgress dialog
+		progressDialog = ProgressDialog.show(ArFieldListFragment.this.getActivity(), "", "Loading. Please wait...", true);
 	}
 
 	@Override
@@ -148,5 +140,47 @@ public class ArFieldListFragment extends ListFragment {
 		}
 
 		mActivatedPosition = position;
+	}
+	
+	public void onCompleteTask(ArrayList<String[]> data) {
+		for(String[] arr : data) {
+			DummyContent.addItem(arr[1]);
+		}
+		
+		content.notifyDataSetChanged();
+		
+		progressDialog.dismiss();
+		
+	}
+	
+	private class ReadDataAsyncTask extends AsyncTask<String, Integer, ArrayList<String[]>> { 
+
+		public static final String remoteHost = "http://people.rit.edu/~rwl3564/obsession/data.txt";
+		
+		public ArrayList<String[]> doInBackground(String... host) {
+			try {	
+				ArrayList<String[]> result = new ArrayList<String[]>();
+				
+				BufferedReader bf = new BufferedReader(new InputStreamReader((new URL(remoteHost)).openStream()));
+				String line = bf.readLine();
+				while(line != null)
+				{
+					result.add(line.split(","));
+					line = bf.readLine();
+				}
+				return result;
+			} catch (MalformedURLException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			return null;
+		}
+		
+		@Override
+		protected void onPostExecute(ArrayList<String[]> result) {
+			super.onPostExecute(result);
+			ArFieldListFragment.this.onCompleteTask(result);
+		}
 	}
 }

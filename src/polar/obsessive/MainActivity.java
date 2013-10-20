@@ -9,11 +9,24 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.facebook.HttpMethod;
+import com.facebook.Request;
+import com.facebook.Request.Callback;
+import com.facebook.Response;
 import com.facebook.Session;
 import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
+import com.facebook.model.GraphUser;
 import com.facebook.widget.LoginButton;
 
 import polar.obsessive.R;
@@ -38,12 +51,15 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
+import android.widget.TextView;
 
 public class MainActivity extends FragmentActivity {
 	
 	private NotificationManager notificationManager;
 	private UiLifecycleHelper uiHelper;
 	private Cron cronTab;
+	
+	private TextView userInfoTextView;
 	
 	private Session.StatusCallback callback = new Session.StatusCallback() {
 	    @Override
@@ -108,6 +124,7 @@ public class MainActivity extends FragmentActivity {
 		 uiHelper.onCreate(savedInstanceState);
 
 		 LoginButton auth = (LoginButton)findViewById(R.id.login_button);
+		 auth.setReadPermissions(Arrays.asList("user_likes"));
 		 
 		 try {
 			 Log.e("KeyHash:", "WHAT");
@@ -174,7 +191,9 @@ public class MainActivity extends FragmentActivity {
 		Log.e("STATE", state.toString());
 		
 	    if (state.isOpened()) {
-	    	startActivity(new Intent(MainActivity.this, ArFieldListActivity.class)); 
+	    	startActivity(new Intent(MainActivity.this, ArFieldListActivity.class));
+	    	makeMeRequest(session);
+	    	
 	    } else if (state.isClosed()) {
 	    }
 	}
@@ -207,5 +226,71 @@ public class MainActivity extends FragmentActivity {
 	public void onSaveInstanceState(Bundle outState) {
 	    super.onSaveInstanceState(outState);
 	    uiHelper.onSaveInstanceState(outState);
+	}
+	
+	private void makeMeRequest(final Session session) {
+	    // Make an API call to get user data and define a 
+	    // new callback to handle the response.
+	    Request request = Request.newGraphPathRequest(session, "me/og.likes", new Request.Callback() {
+	        @Override
+	        public void onCompleted(Response response) {
+	            // If the response is successful
+	            if (session == Session.getActiveSession()) {
+
+                    // Set the id for the ProfilePictureView
+                    // view that in turn displays the profile picture.
+
+	            	JSONObject a = response.getGraphObject().getInnerJSONObject();
+					try {
+						getValue(a);
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
+	            }
+	            if (response.getError() != null) {
+	                // Handle errors, will do so later.
+	            }
+	        }
+
+	    });
+	    request.executeAsync();
+
+
+	    // handle the response
+	}
+	public void getValue(JSONObject a) throws JSONException{
+		Iterator<?> keys = a.keys();
+
+        while( keys.hasNext() ){
+            String key = (String)keys.next();
+            if(a.optJSONArray(key) != null){
+            	getValue(a.optJSONArray (key));
+			}
+			else if (a.optJSONObject(key) != null){
+				getValue(a.optJSONObject(key));
+			}
+			else if (key.equals("id") || key.equals("title")){
+ 
+				System.out.println(key + ": " + a.get(key));
+
+			}
+        }
+	}
+	public void getValue(JSONArray a){
+		for (int i = 0; i < a.length(); i++) {
+			  try {
+				if(a.getJSONObject(i) != null){
+					getValue(a.getJSONObject(i));
+				  }
+				  else if (a.getJSONArray(i) != null){
+					  getValue(a.getJSONArray(i));
+				  }
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 }

@@ -1,53 +1,30 @@
 package polar.obsessive;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
+
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.facebook.HttpMethod;
+
 import com.facebook.Request;
-import com.facebook.Request.Callback;
+
 import com.facebook.Response;
 import com.facebook.Session;
 import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
-import com.facebook.model.GraphUser;
+
 import com.facebook.widget.LoginButton;
 
 import polar.obsessive.R;
 import android.os.Bundle;
 import android.os.StrictMode;
-import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.PackageManager.NameNotFoundException;
-import android.content.pm.Signature;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.NotificationCompat;
-import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -55,7 +32,7 @@ import android.widget.TextView;
 
 public class MainActivity extends FragmentActivity {
 	
-	private NotificationManager notificationManager;
+	private NotificationHelper notifyMan;
 	private UiLifecycleHelper uiHelper;
 	private Cron cronTab;
 	
@@ -68,6 +45,10 @@ public class MainActivity extends FragmentActivity {
 	    }
 	};
 	
+/*
+ * REMOVE ME LATER	
+ */
+
 	public void startCron(View v){
 		Log.i("alarm", "STARTING!!!");
 		cronTab.SetCron(this, 5);
@@ -79,31 +60,9 @@ public class MainActivity extends FragmentActivity {
 	}
 	
 	public void testImage(View v){
-		Bitmap mBit = convertURLtoBitmap("http://www.eminemlab.com/images/wallpapers/Eminem-01-1024x768b.jpg");
-		notify("New Album!!", "Eminem is releasing a new Album on 11/25/2013!", mBit, null);
+		Bitmap mBit = notifyMan.convertURLtoBitmap("http://www.eminemlab.com/images/wallpapers/Eminem-01-1024x768b.jpg");
+		notifyMan.notify("New Album!!", "Eminem is releasing a new Album on 11/25/2013!", mBit, null);
 	}
-	
-	public Bitmap convertURLtoBitmap(String src) {
-
-        try {
-                        URL url = new URL(src);  
-                        HttpURLConnection connection = (HttpURLConnection) url
-                                        .openConnection();
-                        connection.setDoInput(true);
-                        connection.connect();
-                        InputStream input = connection.getInputStream();
-                        Bitmap myBitmap = BitmapFactory.decodeStream(input);
-                        myBitmap = Bitmap.createScaledBitmap(myBitmap, 96, 96, true);
-                        return myBitmap;
-
-        }
-
-        catch (IOException e) {
-                        e.printStackTrace();
-                        return null;
-        }
-}
-	
 	
 	
 	@Override
@@ -118,16 +77,17 @@ public class MainActivity extends FragmentActivity {
 		setContentView(R.layout.splash);
 
 		//setContentView(R.layout.activity_main);
-		notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+		notifyMan = new NotificationHelper(this);
 
-		 uiHelper = new UiLifecycleHelper(this, callback);
-		 uiHelper.onCreate(savedInstanceState);
+		uiHelper = new UiLifecycleHelper(this, callback);
+		uiHelper.onCreate(savedInstanceState);
 
 		 LoginButton auth = (LoginButton)findViewById(R.id.login_button);
 		 auth.setReadPermissions(Arrays.asList("user_likes"));
+
+		 /*
 		 
 		 try {
-			 Log.e("KeyHash:", "WHAT");
 		        PackageInfo info = getPackageManager().getPackageInfo("polar.obsessive", PackageManager.GET_SIGNATURES);
 		        for (Signature signature : info.signatures) {
 		            MessageDigest md = MessageDigest.getInstance("SHA");
@@ -138,7 +98,7 @@ public class MainActivity extends FragmentActivity {
 
 		    } catch (NoSuchAlgorithmException e) {
 
-		    }
+		    }*/
 	}
 	
 	
@@ -152,49 +112,15 @@ public class MainActivity extends FragmentActivity {
 	}
 
 	
-	// creates a notification with default app-icon in case IMG-URL was not found/not provided
-	public void notify(String contentTitle, String contentText, PendingIntent pIntent){
-		Intent intent = new Intent(this, MainActivity.class);
-		if(pIntent == null)
-			pIntent = PendingIntent.getActivity(this, 0, intent, 0);
-		NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
-		builder.setSmallIcon(R.drawable.obsessive_icon);
-		builder.setContentTitle(contentTitle);
-		builder.setContentText(contentText);
-		builder.setTicker(contentTitle);
-		// this imposes the pendingIntent onto the notification, acting as an eventhandler
-		builder.setContentIntent(pIntent);
-        Notification n = builder.build();
-		notificationManager.notify(0,n);
-	}
-	
-	// creates a notification with provided bitmap picture (album)
-	public void notify(String contentTitle, String contentText, Bitmap largeIcon, PendingIntent pIntent){
-		Intent intent = new Intent(this, MainActivity.class);
-		if(pIntent == null)
-			pIntent = PendingIntent.getActivity(this, 0, intent, 0);
-		NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
-		builder.setLargeIcon(largeIcon);
-		builder.setSmallIcon(R.drawable.obsessive_icon);
-		builder.setContentTitle(contentTitle);
-		builder.setContentText(contentText);
-		builder.setTicker(contentTitle);
-		// this imposes the pendingIntent onto the notification, acting as an eventhandler
-		builder.setContentIntent(pIntent);
-        Notification n = builder.build();
-
-		notificationManager.notify(0,n);
-	}
-	
 	private void onSessionStateChange(Session session, SessionState state, Exception exception) {
 		
 		Log.e("STATE", state.toString());
 		
-	    if (state.isOpened()) {
-	    	startActivity(new Intent(MainActivity.this, ArFieldListActivity.class));
+
+	    if (state.isOpened() && !ArFieldListActivity.open) {
+	    	ArFieldListActivity.open = true;
+	    	startActivity(new Intent(MainActivity.this, ArFieldListActivity.class)); 
 	    	makeMeRequest(session);
-	    	
-	    } else if (state.isClosed()) {
 	    }
 	}
 	

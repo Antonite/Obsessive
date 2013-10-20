@@ -6,27 +6,37 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 import polar.obsessive.data.DataField;
+import polar.obsessive.data.DataField.DataItem;
+import polar.obsessive.data.LocalStore;
+
 
 public class ArFieldListFragment extends ListFragment {
 
 	private static final String STATE_ACTIVATED_POSITION = "activated_position";
-
+	private final static int MENU_DELETE = 1;
+	
 	private Callbacks mCallbacks = sDummyCallbacks;
-	
 	private int mActivatedPosition = ListView.INVALID_POSITION;
-
-	private ArrayAdapter<DataField.DataItem> content;
-	
+	private LazyAdapter content;
 	private ProgressDialog progressDialog;
 	
 	public interface Callbacks {
@@ -53,19 +63,38 @@ public class ArFieldListFragment extends ListFragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		content = new ArrayAdapter<DataField.DataItem>(getActivity(),
-				android.R.layout.simple_list_item_activated_1,
-				android.R.id.text1, DataField.ITEMS);
 		
+		content = new LazyAdapter(DataField.ITEMS);
 		setListAdapter(content);
 		
 		// Fire async task
-		ReadDataAsyncTask task = new ReadDataAsyncTask();
-		task.execute();
+		LocalStore.ensure(getActivity());
 		
-		// Start InProgress dialog
-		progressDialog = ProgressDialog.show(ArFieldListFragment.this.getActivity(), "", "Loading. Please wait...", true);
+		if(LocalStore.cachedPage == null) {
+			ReadDataAsyncTask task = new ReadDataAsyncTask();
+			task.execute();
+			progressDialog = ProgressDialog.show(ArFieldListFragment.this.getActivity(), "", "Loading. Please wait...", true);
+		} else {
+			onCompleteTask(LocalStore.cachedPage);
+		}
+	}
+	
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+		registerForContextMenu(getListView());
+	}
+	
+	@Override
+	public void onPause() {
+		LocalStore.save(getActivity());
+		super.onPause();
+	}
+	
+	@Override
+	public void onDestroy() {
+		LocalStore.save(getActivity());
+		super.onDestroy();
 	}
 
 	@Override
@@ -78,6 +107,22 @@ public class ArFieldListFragment extends ListFragment {
 			setActivatedPosition(savedInstanceState
 					.getInt(STATE_ACTIVATED_POSITION));
 		}
+		
+	}
+	
+	@Override
+	public void onCreateContextMenu(android.view.ContextMenu menu, View v, android.view.ContextMenu.ContextMenuInfo menuInfo) {
+		menu.add(Menu.NONE, MENU_DELETE , Menu.NONE, "Delete");
+	};
+	
+	@Override
+	public boolean onContextItemSelected(MenuItem item) {
+		switch(item.getItemId()) {
+		case MENU_DELETE:
+			//TODO: DELETE CODE GOES HERE
+			break;
+		}
+		return false;
 	}
 
 	@Override
@@ -143,14 +188,16 @@ public class ArFieldListFragment extends ListFragment {
 	}
 	
 	public void onCompleteTask(ArrayList<String[]> data) {
+		DataField.clear();
 		for(String[] arr : data) {
-			DataField.addItem(arr[1]);
+			DataField.addItem(arr[0],arr[1],arr[2],arr[3]);
 		}
 		
 		content.notifyDataSetChanged();
 		
-		progressDialog.dismiss();
-		
+		if(progressDialog != null) {
+			progressDialog.dismiss();
+		}
 	}
 	
 	private class ReadDataAsyncTask extends AsyncTask<String, Integer, ArrayList<String[]>> { 
@@ -168,6 +215,7 @@ public class ArFieldListFragment extends ListFragment {
 					result.add(line.split(","));
 					line = bf.readLine();
 				}
+				bf.close();
 				return result;
 			} catch (MalformedURLException e) {
 				e.printStackTrace();
@@ -180,7 +228,49 @@ public class ArFieldListFragment extends ListFragment {
 		@Override
 		protected void onPostExecute(ArrayList<String[]> result) {
 			super.onPostExecute(result);
+			LocalStore.cachedPage = result;
 			ArFieldListFragment.this.onCompleteTask(result);
 		}
 	}
+	
+	public class LazyAdapter extends BaseAdapter {
+		 
+	    private List<DataItem> data;
+	    private LayoutInflater inflater=null;
+//	    public ImageLoader imageLoader;
+	 
+	    public LazyAdapter(List<DataItem> iTEMS) {
+	        data=iTEMS;
+	        inflater = (LayoutInflater)ArFieldListFragment.this.getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//	        imageLoader=new ImageLoader(activity.getApplicationContext());
+	    }
+	 
+	    public int getCount() {
+	        return data.size();
+	    }
+	 
+	    public Object getItem(int position) {
+	        return position;
+	    }
+	 
+	    public long getItemId(int position) {
+	        return position;
+	    }
+	 
+	    public View getView(int position, View convertView, ViewGroup parent) {
+	        View vi=convertView;
+	        if(convertView==null)
+	            vi = inflater.inflate(R.layout.list_row, null);
+	 
+	        TextView artist = (TextView)vi.findViewById(R.id.artist);
+	        ImageView thumb_image = (ImageView)vi.findViewById(R.id.list_image);
+	 
+	        // Setting all values in listview
+	        artist.setText(data.get(position).artist);
+	        thumb_image.setImageBitmap(NotificationHelper.convertURLtoDisplayBitmap(data.get(position).url));
+	        return vi;
+	    }
+	}
+	
 }
+

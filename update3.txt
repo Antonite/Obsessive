@@ -1,0 +1,3 @@
+2000-10-24,Linkin Park,Hybrid Theory,http://upload.wikimedia.org/wikipedia/en/c/c9/Linkin_park_hybrid_theory.jpg
+2001-09-11,Slayer,God Hates Us All,http://upload.wikimedia.org/wikipedia/en/3/37/Slayer-GodHatesUsAll.jpg
+2001-03-03,Daft Punk,Discovery,http://upload.wikimedia.org/wikipedia/en/a/ae/Daft_Punk_-_Discovery.jpg

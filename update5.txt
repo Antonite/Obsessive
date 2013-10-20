@@ -1,0 +1,3 @@
+2005-03-14,Daft Punk,Human After All,http://upload.wikimedia.org/wikipedia/en/0/0d/Humanafterall.jpg
+2006-16-08,Slayer,Christ Illusion,http://upload.wikimedia.org/wikipedia/en/b/b7/Slayer_-_Christ_Illusion.jpg
+2007-05-14,Linkin Park,Minutes to Midnight,http://upload.wikimedia.org/wikipedia/en/7/7a/Minutes_to_Midnight_cover.jpg

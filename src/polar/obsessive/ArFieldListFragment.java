@@ -2,7 +2,9 @@ package polar.obsessive;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -11,6 +13,8 @@ import java.util.List;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
@@ -244,6 +248,41 @@ public class ArFieldListFragment extends ListFragment {
 	        inflater = (LayoutInflater)ArFieldListFragment.this.getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 //	        imageLoader=new ImageLoader(activity.getApplicationContext());
 	    }
+	    
+	    private class URLtoBitmap extends AsyncTask<String, Integer, Bitmap>{ 
+
+			private ImageView imgView;
+			
+			public URLtoBitmap(ImageView v){
+				imgView = v;
+			}
+			
+			public Bitmap doInBackground(String... src) {
+				 try {
+                     URL url = new URL(src[0]);  
+                     HttpURLConnection connection = (HttpURLConnection) url
+                                     .openConnection();
+                     connection.setDoInput(true);
+                     connection.connect();
+                     InputStream input = connection.getInputStream();
+                     Bitmap myBitmap = BitmapFactory.decodeStream(input);
+                     myBitmap = Bitmap.createScaledBitmap(myBitmap, 96, 96, true);
+                     return myBitmap;
+
+				     }
+				
+				     catch (IOException e) {
+                     e.printStackTrace();
+                     return null;
+     }
+			}
+			
+			@Override
+			protected void onPostExecute(Bitmap bm) {
+				super.onPostExecute(bm);
+				imgView.setImageBitmap(bm);
+			}
+		}
 	 
 	    public int getCount() {
 	        return data.size();
@@ -267,7 +306,8 @@ public class ArFieldListFragment extends ListFragment {
 	 
 	        // Setting all values in listview
 	        artist.setText(data.get(position).artist);
-	        thumb_image.setImageBitmap(NotificationHelper.convertURLtoDisplayBitmap(data.get(position).url));
+	        //thumb_image.setImageBitmap(NotificationHelper.convertURLtoDisplayBitmap(data.get(position).url));
+	        new URLtoBitmap(thumb_image).execute(data.get(position).url);
 	        return vi;
 	    }
 	}

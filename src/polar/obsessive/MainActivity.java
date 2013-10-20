@@ -157,7 +157,7 @@ public class MainActivity extends FragmentActivity {
 	private void makeMeRequest(final Session session) {
 	    // Make an API call to get user data and define a 
 	    // new callback to handle the response.
-	    Request request = Request.newGraphPathRequest(session, "me/og.likes", new Request.Callback() {
+	    Request request = Request.newGraphPathRequest(session, "me/likes", new Request.Callback() {
 	        @Override
 	        public void onCompleted(Response response) {
 	            // If the response is successful
@@ -167,12 +167,7 @@ public class MainActivity extends FragmentActivity {
                     // view that in turn displays the profile picture.
 
 	            	JSONObject a = response.getGraphObject().getInnerJSONObject();
-					try {
-						getValue(a);
-					} catch (JSONException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+					getValue(a.optJSONArray("data"));
 
 	            }
 	            if (response.getError() != null) {
@@ -187,25 +182,14 @@ public class MainActivity extends FragmentActivity {
 	    // handle the response
 	}
 	public void getValue(JSONObject a) throws JSONException{
-		Iterator<?> keys = a.keys();
+		if (a.get("category").equals("Musician/band")){
+			queryArtist(a.get("id").toString(), Session.getActiveSession());
+		}
 
-        while( keys.hasNext() ){
-            String key = (String)keys.next();
-            if(a.optJSONArray(key) != null){
-            	getValue(a.optJSONArray (key));
-			}
-			else if (a.optJSONObject(key) != null){
-				getValue(a.optJSONObject(key));
-			}
-			else if (key.equals("id") || key.equals("title")){
- 
-				System.out.println(key + ": " + a.get(key));
-
-			}
-        }
 	}
 	public void getValue(JSONArray a){
 		for (int i = 0; i < a.length(); i++) {
+			
 			  try {
 				if(a.getJSONObject(i) != null){
 					getValue(a.getJSONObject(i));
@@ -218,5 +202,36 @@ public class MainActivity extends FragmentActivity {
 				e.printStackTrace();
 			}
 		}
+	}
+	public void queryArtist(String artist, final Session session){
+		Request request = Request.newGraphPathRequest(session, artist, new Request.Callback() {
+	        @Override
+	        public void onCompleted(Response response) {
+	            // If the response is successful
+	            if (session == Session.getActiveSession()) {
+
+                    // Set the id for the ProfilePictureView
+                    // view that in turn displays the profile picture.
+
+	            	JSONObject a = response.getGraphObject().getInnerJSONObject();
+	            	
+	            	try {
+	            		
+	            		String username_title = a.get("username").toString();
+						String profile_pic = a.optJSONObject("cover").get("source").toString();
+						
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
+	            }
+	            if (response.getError() != null) {
+	                // Handle errors, will do so later.
+	            }
+	        }
+
+	    });
+	    request.executeAsync();
 	}
 }

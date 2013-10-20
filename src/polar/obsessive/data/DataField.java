@@ -17,8 +17,8 @@ public class DataField {
 
 	public static Map<String, DataItem> ITEM_MAP = new HashMap<String, DataItem>();
 
-	public static void addItem(String date, String artist, String album) {
-		DataItem item = new DataItem(date, artist, album);
+	public static void addItem(String date, String artist, String album, String url) {
+		DataItem item = new DataItem(date, artist, album, url);
 		ITEMS.add(item);
 		ITEM_MAP.put(item.id, item);
 	}
@@ -28,13 +28,15 @@ public class DataField {
 		public String date;
 		public String artist;
 		public String album;
+		public String url;
 		private static int nextId = 0;
 
-		public DataItem(String date, String artist, String album) {
+		public DataItem(String date, String artist, String album, String url) {
 			this.id = Integer.toString(nextId++);
 			this.date = date;
 			this.artist = artist;
 			this.album = album;
+			this.url = url;
 		}
 
 		@Override

@@ -156,7 +156,7 @@ public class ArFieldListFragment extends ListFragment {
 	public void onCompleteTask(ArrayList<String[]> data) {
 		DataField.ITEMS.clear();
 		for(String[] arr : data) {
-			DataField.addItem(arr[0],arr[1],arr[2]);
+			DataField.addItem(arr[0],arr[1],arr[2],arr[3]);
 		}
 		
 		content.notifyDataSetChanged();
@@ -205,7 +205,7 @@ public class ArFieldListFragment extends ListFragment {
 	    public LazyAdapter(List<DataItem> iTEMS) {
 	        data=iTEMS;
 	        inflater = (LayoutInflater)ArFieldListFragment.this.getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-	      //  imageLoader=new ImageLoader(activity.getApplicationContext());
+//	        imageLoader=new ImageLoader(activity.getApplicationContext());
 	    }
 	 
 	    public int getCount() {
@@ -225,56 +225,57 @@ public class ArFieldListFragment extends ListFragment {
 	        if(convertView==null)
 	            vi = inflater.inflate(R.layout.list_row, null);
 	 
-	        TextView month = (TextView)vi.findViewById(R.id.month); 
-	        TextView day = (TextView)vi.findViewById(R.id.day); 
+//	        TextView month = (TextView)vi.findViewById(R.id.month); 
+//	        TextView day = (TextView)vi.findViewById(R.id.day); 
 	        TextView artist = (TextView)vi.findViewById(R.id.artist);
-	        TextView album = (TextView)vi.findViewById(R.id.album);
-//	        ImageView thumb_image = (ImageView)vi.findViewById(R.id.list_image);
+//	        TextView album = (TextView)vi.findViewById(R.id.album);
+	        ImageView thumb_image = (ImageView)vi.findViewById(R.id.list_image);
 	 
-	        String date = data.get(position).date;
-	        String mon = date.substring(5,7);
-	        String dai = date.substring(8);
-	        String monStr = "";
+//	        String date = data.get(position).date;
+//	        String mon = date.substring(5,7);
+//	        String dai = date.substring(8);
+//	        String monStr = "";
 	        
-	        switch (Integer.parseInt(mon)) {
-            case 1:  monStr = "JAN";
-                     break;
-            case 2:  monStr = "FEB";
-                     break;
-            case 3:  monStr = "MAR";
-                     break;
-            case 4:  monStr = "APR";
-                     break;
-            case 5:  monStr = "MAY";
-                     break;
-            case 6:  monStr = "JUN";
-                     break;
-            case 7:  monStr = "JUL";
-                     break;
-            case 8:  monStr = "AUG";
-                     break;
-            case 9:  monStr = "SEP";
-                     break;
-            case 10: monStr = "OCT";
-                     break;
-            case 11: monStr = "NOV";
-                     break;
-            case 12: monStr = "DEC";
-                     break;
-            default: monStr = "UNF";
-                     break;
-	        }
+//	        switch (Integer.parseInt(mon)) {
+//            case 1:  monStr = "JAN";
+//                     break;
+//            case 2:  monStr = "FEB";
+//                     break;
+//            case 3:  monStr = "MAR";
+//                     break;
+//            case 4:  monStr = "APR";
+//                     break;
+//            case 5:  monStr = "MAY";
+//                     break;
+//            case 6:  monStr = "JUN";
+//                     break;
+//            case 7:  monStr = "JUL";
+//                     break;
+//            case 8:  monStr = "AUG";
+//                     break;
+//            case 9:  monStr = "SEP";
+//                     break;
+//            case 10: monStr = "OCT";
+//                     break;
+//            case 11: monStr = "NOV";
+//                     break;
+//            case 12: monStr = "DEC";
+//                     break;
+//            default: monStr = "UNF";
+//                     break;
+//	        }
 	        
 	        
 	        // Setting all values in listview
-	        month.setText(monStr);
-	        day.setText(dai);
+//	        month.setText(monStr);
+//	        day.setText(dai);
 	        artist.setText(data.get(position).artist);
-	        album.setText(data.get(position).album);
+//	        album.setText(data.get(position).album);
 	        
 //	        NotificationHelper.convertURLtoDisplayBitmap(src)
 	        
-	      //  imageLoader.DisplayImage(song.get(CustomizedListView.KEY_THUMB_URL), thumb_image);
+//	        imageLoader.DisplayImage(song.get(CustomizedListView.KEY_THUMB_URL), thumb_image);
+	        thumb_image.setImageBitmap(NotificationHelper.convertURLtoDisplayBitmap(data.get(position).url));
 	        return vi;
 	    }
 	}

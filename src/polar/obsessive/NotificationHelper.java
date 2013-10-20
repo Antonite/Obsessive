@@ -87,7 +87,7 @@ public class NotificationHelper {
                         connection.connect();
                         InputStream input = connection.getInputStream();
                         Bitmap myBitmap = BitmapFactory.decodeStream(input);
-                        myBitmap = Bitmap.createScaledBitmap(myBitmap, 32, 32, true);
+                        myBitmap = Bitmap.createScaledBitmap(myBitmap, 96, 96, true);
                         return myBitmap;
 
         }
@@ -96,5 +96,10 @@ public class NotificationHelper {
                         e.printStackTrace();
                         return null;
         }
+	}
+	
+	public static Bitmap resizeBitmap(Bitmap bit){
+		Bitmap myBitmap = Bitmap.createScaledBitmap(bit, 32, 32, true);
+        return myBitmap;
 	}
 }

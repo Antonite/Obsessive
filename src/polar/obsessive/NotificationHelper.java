@@ -56,7 +56,7 @@ public class NotificationHelper {
 	        notifyMan.notify(0,n);
 		}
 	
-	public static Bitmap convertURLtoBitmap(String src) {
+	public Bitmap convertURLtoBitmap(String src) {
 
         try {
                         URL url = new URL(src);  
@@ -67,6 +67,27 @@ public class NotificationHelper {
                         InputStream input = connection.getInputStream();
                         Bitmap myBitmap = BitmapFactory.decodeStream(input);
                         myBitmap = Bitmap.createScaledBitmap(myBitmap, 96, 96, true);
+                        return myBitmap;
+
+        }
+
+        catch (IOException e) {
+                        e.printStackTrace();
+                        return null;
+        }
+	}
+	
+	public static Bitmap convertURLtoDisplayBitmap(String src) {
+
+        try {
+                        URL url = new URL(src);  
+                        HttpURLConnection connection = (HttpURLConnection) url
+                                        .openConnection();
+                        connection.setDoInput(true);
+                        connection.connect();
+                        InputStream input = connection.getInputStream();
+                        Bitmap myBitmap = BitmapFactory.decodeStream(input);
+                        myBitmap = Bitmap.createScaledBitmap(myBitmap, 32, 32, true);
                         return myBitmap;
 
         }

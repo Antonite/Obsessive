@@ -51,10 +51,9 @@ public class MainActivity extends FragmentActivity {
 	}
 	
 	public void testImage(View v){
-		Bitmap mBit = NotificationHelper.convertURLtoBitmap("http://www.eminemlab.com/images/wallpapers/Eminem-01-1024x768b.jpg");
+		Bitmap mBit = notifyMan.convertURLtoBitmap("http://www.eminemlab.com/images/wallpapers/Eminem-01-1024x768b.jpg");
 		notifyMan.notify("New Album!!", "Eminem is releasing a new Album on 11/25/2013!", mBit, null);
 	}
-	
 	
 	
 	@Override

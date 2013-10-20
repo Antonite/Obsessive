@@ -14,9 +14,12 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -88,6 +91,21 @@ public class ArFieldListFragment extends ListFragment {
 			setActivatedPosition(savedInstanceState
 					.getInt(STATE_ACTIVATED_POSITION));
 		}
+		
+		//ListView lv = (ListView) getListView().findViewById(R.id.arfield_list);
+		//registerForContextMenu(lv);
+	}
+	
+	@Override
+	public boolean onContextItemSelected(MenuItem item) {
+	    AdapterContextMenuInfo menuInfo = (AdapterContextMenuInfo) item 
+	            .getMenuInfo(); 
+	    switch (item.getItemId()) {
+	  case R.id.delete:
+		  Log.i("menu", "DELETE");
+	  default:
+	    return super.onContextItemSelected(item);
+	  }
 	}
 
 	@Override

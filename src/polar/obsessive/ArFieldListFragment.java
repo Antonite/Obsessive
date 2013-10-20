@@ -4,9 +4,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.facebook.Request;
+import com.facebook.Response;
+import com.facebook.Session;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -34,7 +42,6 @@ public class ArFieldListFragment extends ListFragment {
 	private Callbacks mCallbacks = sDummyCallbacks;
 	private int mActivatedPosition = ListView.INVALID_POSITION;
 	private LazyAdapter content;
-	private ProgressDialog progressDialog;
 	
 	public interface Callbacks {
 		public void onItemSelected(String id);
@@ -60,11 +67,22 @@ public class ArFieldListFragment extends ListFragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
-		LocalStore.ensure(getActivity());
+	
+		boolean firstLoad = !LocalStore.exists(getActivity());
+	
+		if(firstLoad) {
+			LocalStore.init();
+		} else {
+			LocalStore.ensure(getActivity());
+		}
 		
 		content = new LazyAdapter();
 		setListAdapter(content);
+		
+		if(firstLoad) {
+    		GetFBDataTask task = new GetFBDataTask();
+    		task.execute();
+    	}
 	}
 	
 	@Override
@@ -250,5 +268,121 @@ public class ArFieldListFragment extends ListFragment {
 	    }
 	}
 	
+	class GetFBDataTask extends AsyncTask<String, Integer, ArrayList<String[]>> {
+		
+		private ArrayList<String[]> result = new ArrayList<String[]>();
+		
+		private void makeMeRequest(final Session session) {
+		    // Make an API call to get user data and define a 
+		    // new callback to handle the response.
+		    Request request = Request.newGraphPathRequest(session, "me/likes", new Request.Callback() {
+		        @Override
+		        public void onCompleted(Response response) {
+		            // If the response is successful
+		            if (session == Session.getActiveSession()) {
+
+	                    // Set the id for the ProfilePictureView
+	                    // view that in turn displays the profile picture.
+
+		            	JSONObject a = response.getGraphObject().getInnerJSONObject();
+						getValue(a.optJSONArray("data"));
+
+		            }
+		            if (response.getError() != null) {
+		                // Handle errors, will do so later.
+		            }
+		        }
+
+		    });
+		    request.executeAndWait();
+		}
+		
+		public void getValue(JSONObject a) throws JSONException{
+			if (a.get("category").equals("Musician/band")){
+				queryArtist(a.get("id").toString(), Session.getActiveSession());
+			}
+
+		}
+		
+		public void getValue(JSONArray a){
+			for (int i = 0; i < a.length(); i++) {
+				
+				  try {
+					if(a.getJSONObject(i) != null){
+						getValue(a.getJSONObject(i));
+					  }
+					  else if (a.getJSONArray(i) != null){
+						  getValue(a.getJSONArray(i));
+					  }
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+		
+		public void queryArtist(String artist, final Session session){
+			Request request = Request.newGraphPathRequest(session, artist, new Request.Callback() {
+		        @Override
+		        public void onCompleted(Response response) {
+		            // If the response is successful
+		            if (session == Session.getActiveSession()) {
+
+		            	JSONObject a = response.getGraphObject().getInnerJSONObject();
+		            	
+		            	try {
+		            		
+		            		String username_title="", profile_pic="";
+		            		if (a.has("name")) {
+		            			username_title = a.get("name").toString();
+		            		} else if(a.has("username")) {
+		            			username_title = a.get("username").toString();
+		            		}
+		            		
+		            		if(a.has("cover")) {
+		            			profile_pic = a.optJSONObject("cover").get("source").toString();
+		            		} else {
+		            			profile_pic = "";
+		            		}
+					
+		            		if(username_title == "") {
+		            			return;
+		            		}
+		            		
+		            		String[] vals = new String[2];
+		            		vals[0] = username_title;
+		            		vals[1] = profile_pic;
+		            		result.add(vals);
+							
+						} catch (JSONException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+
+		            }
+		            if (response.getError() != null) {
+		                // Handle errors, will do so later.
+		            }
+		        }
+
+		    });
+		    request.executeAndWait();
+		}
+		@Override
+		protected ArrayList<String[]> doInBackground(String... arg0) {
+			makeMeRequest(Session.getActiveSession());
+			return result;
+		}	
+		
+		@Override
+		protected void onPostExecute(ArrayList<String[]> result) {
+			super.onPostExecute(result);
+			for(String[] pair : result) {
+				LocalStore.subscribedArtists.add(pair[0]);
+				LocalStore.imgs.put(pair[0], pair[1]);
+			}
+			content.notifyDataSetChanged();
+		}
+	}
 }
 

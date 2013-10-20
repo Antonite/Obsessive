@@ -1,9 +1,14 @@
 package polar.obsessive.gui;
+
+import polar.obsessive.ArFieldListActivity;
 import polar.obsessive.R;
 import polar.obsessive.SettingsActivity;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
+import android.util.Log;
+import android.view.Menu;
+import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -21,6 +26,13 @@ public class MainActivity extends Activity {
 		return true;
 	}
 	
+	public void navigatePolarBear(View v){ 
+			Log.i("clicks","You Clicked B1"); 
+			Intent i=new Intent(MainActivity.this, ArFieldListActivity.class);
+			startActivity(i); 
+			System.out.println("asdf"); 
+	}
+
 	@Override
 	public boolean onMenuItemSelected(int featureId, MenuItem item) {
 		switch(item.getItemId()) {
@@ -30,5 +42,4 @@ public class MainActivity extends Activity {
 		}
 		return super.onMenuItemSelected(featureId, item);
 	}
-	
 }

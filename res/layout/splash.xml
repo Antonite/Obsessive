@@ -57,7 +57,13 @@
         android:layout_height="wrap_content"
         android:text="Stop Cron"
         android:onClick="stopCron" />
-
+	<Button
+        android:id="@+id/removeMeTestDownload"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Test Image"
+        android:onClick="testImage" />
+    testImage
 	</LinearLayout>
 
     

@@ -1,5 +1,12 @@
 package polar.obsessive;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
@@ -11,6 +18,8 @@ import com.facebook.widget.LoginButton;
 
 import polar.obsessive.R;
 import android.os.Bundle;
+import android.os.StrictMode;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -22,7 +31,9 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.pm.Signature;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.NotificationCompat;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
@@ -51,12 +62,39 @@ public class MainActivity extends FragmentActivity {
 		cronTab.CancelCron(this);
 	}
 	
+	public void testImage(View v){
+		Bitmap mBit = convertURLtoBitmap("http://www.eminemlab.com/images/wallpapers/Eminem-01-1024x768b.jpg");
+		notify("New Album!!", "Eminem is releasing a new Album on 11/25/2013!", mBit, null);
+	}
+	
+	public Bitmap convertURLtoBitmap(String src) {
+
+        try {
+                        URL url = new URL(src);  
+                        HttpURLConnection connection = (HttpURLConnection) url
+                                        .openConnection();
+                        connection.setDoInput(true);
+                        connection.connect();
+                        InputStream input = connection.getInputStream();
+                        Bitmap myBitmap = BitmapFactory.decodeStream(input);
+                        myBitmap = Bitmap.createScaledBitmap(myBitmap, 96, 96, true);
+                        return myBitmap;
+
+        }
+
+        catch (IOException e) {
+                        e.printStackTrace();
+                        return null;
+        }
+}
+	
 	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+		StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+		StrictMode.setThreadPolicy(policy);
 		cronTab = new Cron();
 		
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -95,31 +133,39 @@ public class MainActivity extends FragmentActivity {
 	    }
 		super.onResumeFragments();
 	}
-	
-	public void createNotification(View v){
-		notify("New Album!!", "Eminem is releasing a new Album on 11/25/2013!");
-	}
+
 	
 	// creates a notification with default app-icon in case IMG-URL was not found/not provided
-	public void notify(String contentTitle, String contentText){
+	public void notify(String contentTitle, String contentText, PendingIntent pIntent){
 		Intent intent = new Intent(this, MainActivity.class);
-		PendingIntent pIntent = PendingIntent.getActivity(this, 0, intent, 0);
-		// notification image subject to change
-		long when = System.currentTimeMillis();
-		Notification n  = new Notification(R.drawable.obsessive_icon, contentTitle, when);
-		n.setLatestEventInfo(this, contentTitle, contentText, pIntent);
+		if(pIntent == null)
+			pIntent = PendingIntent.getActivity(this, 0, intent, 0);
+		NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+		builder.setSmallIcon(R.drawable.obsessive_icon);
+		builder.setContentTitle(contentTitle);
+		builder.setContentText(contentText);
+		builder.setTicker(contentTitle);
+		// this imposes the pendingIntent onto the notification, acting as an eventhandler
+		builder.setContentIntent(pIntent);
+        Notification n = builder.build();
 		notificationManager.notify(0,n);
 	}
 	
 	// creates a notification with provided bitmap picture (album)
-	public void notify(String contentTitle, String contentText, Bitmap largeIcon){
+	public void notify(String contentTitle, String contentText, Bitmap largeIcon, PendingIntent pIntent){
 		Intent intent = new Intent(this, MainActivity.class);
-		PendingIntent pIntent = PendingIntent.getActivity(this, 0, intent, 0);
-		// notification image subject to change
-		long when = System.currentTimeMillis();
-		Notification n  = new Notification(R.drawable.obsessive_icon, contentTitle, when);
-		n.largeIcon = largeIcon;
-		n.setLatestEventInfo(this, contentTitle, contentText, pIntent);
+		if(pIntent == null)
+			pIntent = PendingIntent.getActivity(this, 0, intent, 0);
+		NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+		builder.setLargeIcon(largeIcon);
+		builder.setSmallIcon(R.drawable.obsessive_icon);
+		builder.setContentTitle(contentTitle);
+		builder.setContentText(contentText);
+		builder.setTicker(contentTitle);
+		// this imposes the pendingIntent onto the notification, acting as an eventhandler
+		builder.setContentIntent(pIntent);
+        Notification n = builder.build();
+
 		notificationManager.notify(0,n);
 	}
 	

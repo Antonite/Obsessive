@@ -31,6 +31,8 @@ import android.view.Window;
 public class MainActivity extends FragmentActivity {
 	
 	private NotificationManager notificationManager;
+	private UiLifecycleHelper uiHelper;
+	private Cron cronTab;
 	
 	private Session.StatusCallback callback = new Session.StatusCallback() {
 	    @Override
@@ -39,11 +41,23 @@ public class MainActivity extends FragmentActivity {
 	    }
 	};
 	
-	private UiLifecycleHelper uiHelper;
+	public void startCron(View v){
+		Log.i("alarm", "STARTING!!!");
+		cronTab.SetCron(this, 5);
+	}
+	
+	public void stopCron(View v){
+		Log.i("alarm", "ENDING!!!");
+		cronTab.CancelCron(this);
+	}
+	
+	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		cronTab = new Cron();
 		
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		
@@ -104,7 +118,8 @@ public class MainActivity extends FragmentActivity {
 		Log.e("STATE", state.toString());
 		
 	    if (state.isOpened()) {
-	    	startActivity(new Intent(MainActivity.this, ArFieldListActivity.class)); 
+	    	Log.i("INFO", "Stuck Here...");
+	    	//startActivity(new Intent(MainActivity.this, ArFieldListActivity.class)); 
 	    } else if (state.isClosed()) {
 	        Log.i("INFO", "Logged out...");
 	    }

@@ -72,6 +72,16 @@ public class MainActivity extends FragmentActivity {
 		    }
 	}
 	
+	
+	@Override
+	protected void onResumeFragments() {
+		Session session = Session.getActiveSession();
+		if (session != null && (session.isOpened() || session.isClosed()) ) {
+	        onSessionStateChange(session, session.getState(), null);
+	    }
+		super.onResumeFragments();
+	}
+	
 	public void createNotification(View v){
 		notify("New Album!!", "Eminem is releasing a new Album on 11/25/2013!");
 	}

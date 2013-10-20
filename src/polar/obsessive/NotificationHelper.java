@@ -96,7 +96,7 @@ public class NotificationHelper {
                         connection.connect();
                         InputStream input = connection.getInputStream();
                         Bitmap myBitmap = BitmapFactory.decodeStream(input);
-                        myBitmap = Bitmap.createScaledBitmap(myBitmap, 96, 96, true);
+                        myBitmap = Bitmap.createScaledBitmap(myBitmap, 256, 256, true);
                         return myBitmap;
 
         }

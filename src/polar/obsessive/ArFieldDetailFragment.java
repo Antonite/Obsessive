@@ -107,51 +107,26 @@ public class ArFieldDetailFragment extends ListFragment {
 	        if(convertView==null)
 	            vi = inflater.inflate(R.layout.detail_row, null);
 	 
-//	        TextView month = (TextView)vi.findViewById(R.id.month); 
-//	        TextView day = (TextView)vi.findViewById(R.id.day); 
+	        TextView date = (TextView)vi.findViewById(R.id.dt); 
+	        TextView datetxt = (TextView)vi.findViewById(R.id.date_txt); 
 	        TextView artist = (TextView)vi.findViewById(R.id.artist);
+	        TextView artisttxt = (TextView)vi.findViewById(R.id.artist_txt);
 //	        TextView album = (TextView)vi.findViewById(R.id.album);
 	        ImageView thumb_image = (ImageView)vi.findViewById(R.id.album_image);
 	 
-//	        String date = data.get(position).date;
-//	        String mon = date.substring(5,7);
-//	        String dai = date.substring(8);
-//	        String monStr = "";
+	        String adate = "2013-10-07";
+	        int mon = Integer.parseInt(adate.substring(5,7));
+	        String dai = adate.substring(8);
 	        
-//	        switch (Integer.parseInt(mon)) {
-//            case 1:  monStr = "JAN";
-//                     break;
-//            case 2:  monStr = "FEB";
-//                     break;
-//            case 3:  monStr = "MAR";
-//                     break;
-//            case 4:  monStr = "APR";
-//                     break;
-//            case 5:  monStr = "MAY";
-//                     break;
-//            case 6:  monStr = "JUN";
-//                     break;
-//            case 7:  monStr = "JUL";
-//                     break;
-//            case 8:  monStr = "AUG";
-//                     break;
-//            case 9:  monStr = "SEP";
-//                     break;
-//            case 10: monStr = "OCT";
-//                     break;
-//            case 11: monStr = "NOV";
-//                     break;
-//            case 12: monStr = "DEC";
-//                     break;
-//            default: monStr = "UNF";
-//                     break;
-//	        }
+	        String[] months = new String[] {"January","February","March","April","May","June","July","August","September","October","November","December"};
 	        
 	        
 	        // Setting all values in listview
-//	        month.setText(monStr);
-//	        day.setText(dai);
+	        date.setText(months[mon-1] + " " + dai);
+	        datetxt.setText(datetxt.getText());
+	        
 	        artist.setText(data.get(position));
+	        artisttxt.setText(artisttxt.getText());
 //	        album.setText(data.get(position).album);
 	        
 //	        NotificationHelper.convertURLtoDisplayBitmap(src)

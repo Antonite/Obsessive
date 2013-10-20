@@ -47,27 +47,7 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="30dp"
             android:layout_marginBottom="30dp" />
-    
-    <Button
-        android:id="@+id/removeMeStartCron"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Start Cron"
-        android:onClick="startCron" />
-
-    <Button
-        android:id="@+id/removeMeStopCron"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Stop Cron"
-        android:onClick="stopCron" />
-	<Button
-        android:id="@+id/removeMeTestDownload"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Test Image"
-        android:onClick="testImage" />
-    testImage
+   
 	</LinearLayout>
 
     

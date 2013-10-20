@@ -2,6 +2,7 @@ package polar.obsessive.data;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -12,9 +13,9 @@ import android.content.Context;
 public class LocalStore {
 	
 	public static class Album {
-		String date;
-		String title;
-		String img;
+		public String date;
+		public String title;
+		public String img;
 	}
 	
 	private final static long CACHE_TIME_DELAY = 10*60*1000; 
@@ -23,6 +24,7 @@ public class LocalStore {
 	public static long lastUpdate;
 	public static ArrayList<String> subscribedArtists;
 	public static HashMap<String, ArrayList<Album>> updates;
+	public static HashMap<String, String> imgs;
 	
 	public static ArrayList<String[]> cachedPage;
 	
@@ -35,8 +37,18 @@ public class LocalStore {
 	public static void init() {
 		subscribedArtists = new ArrayList<String>();
 		updates = new HashMap<String, ArrayList<Album>>();
+		imgs = new HashMap<String, String>();
 		lastUpdate = -1;
 		loaded = true;
+	}
+	
+	public static boolean exists(Context c) {
+		try {
+			FileInputStream fis = c.openFileInput("artists.txt");
+			fis.close();
+			return true;
+		} catch(IOException e) {}
+		return false;
 	}
 	
 	public static void load(Context c) {
@@ -53,6 +65,10 @@ public class LocalStore {
 				fis.read(buf);
 				String artist = new String(buf);
 				subscribedArtists.add(artist);
+				
+				fis.read(buf);
+				String img = new String(buf);
+				imgs.put(artist, img);
 				
 				ArrayList<Album> albums = new ArrayList<Album>(); 
 				updates.put(artist, albums);
@@ -121,6 +137,15 @@ public class LocalStore {
 					byte[] buf = artist.getBytes();
 					fos.writeInt(buf.length);
 					fos.write(buf);
+					
+					String img = imgs.get(artist);
+					if(img == null) {
+						fos.writeInt(0);
+					} else  {
+						buf = img.getBytes();
+						fos.writeInt(buf.length);
+						fos.write(buf);
+					}
 					
 					ArrayList<Album> albums = updates.get(artist);
 					if(albums == null) {

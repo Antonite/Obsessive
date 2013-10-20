@@ -44,6 +44,8 @@
             android:name="polar.obsessive.SettingsActivity"
             android:label="@string/title_activity_settings" >
         </activity>
+        <activity android:name="com.facebook.LoginActivity"/>
+        <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/app_id"/>
     </application>
 
 </manifest>

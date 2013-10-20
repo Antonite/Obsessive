@@ -201,8 +201,6 @@ public class MainActivity extends FragmentActivity {
 	            // If the response is successful
 	            if (session == Session.getActiveSession()) {
 
-                    // Set the id for the ProfilePictureView
-                    // view that in turn displays the profile picture.
 
 	            	JSONObject a = response.getGraphObject().getInnerJSONObject();
 	            	

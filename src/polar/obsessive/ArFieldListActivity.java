@@ -1,5 +1,6 @@
 package polar.obsessive;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -31,6 +32,7 @@ public class ArFieldListActivity extends FragmentActivity implements
 	 */
 	private boolean mTwoPane;
 
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -51,8 +53,6 @@ public class ArFieldListActivity extends FragmentActivity implements
 					.findFragmentById(R.id.arfield_list))
 					.setActivateOnItemClick(true);
 		}
-
-		// TODO: If exposing deep links into your app, handle intents here.
 	}
 
 	@Override
@@ -97,4 +97,6 @@ public class ArFieldListActivity extends FragmentActivity implements
 			startActivity(detailIntent);
 		}
 	}
+	
+	
 }

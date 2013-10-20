@@ -23,14 +23,8 @@ public class DummyContent {
 	 */
 	public static Map<String, DummyItem> ITEM_MAP = new HashMap<String, DummyItem>();
 
-	static {
-		// Add 3 sample items.
-		addItem(new DummyItem("1", "Item 1"));
-		addItem(new DummyItem("2", "Item 2"));
-		addItem(new DummyItem("3", "Item 3"));
-	}
-
-	private static void addItem(DummyItem item) {
+	public static void addItem(String content) {
+		DummyItem item = new DummyItem(content);
 		ITEMS.add(item);
 		ITEM_MAP.put(item.id, item);
 	}
@@ -41,9 +35,11 @@ public class DummyContent {
 	public static class DummyItem {
 		public String id;
 		public String content;
+		
+		private static int nextId = 0;
 
-		public DummyItem(String id, String content) {
-			this.id = id;
+		public DummyItem(String content) {
+			this.id = Integer.toString(nextId++);
 			this.content = content;
 		}
 

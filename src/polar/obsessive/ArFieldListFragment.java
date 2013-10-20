@@ -15,7 +15,7 @@ import android.support.v4.app.ListFragment;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import polar.obsessive.dummy.DummyContent;
+import polar.obsessive.data.DataField;
 
 public class ArFieldListFragment extends ListFragment {
 
@@ -25,7 +25,7 @@ public class ArFieldListFragment extends ListFragment {
 	
 	private int mActivatedPosition = ListView.INVALID_POSITION;
 
-	private ArrayAdapter<DummyContent.DummyItem> content;
+	private ArrayAdapter<DataField.DataItem> content;
 	
 	private ProgressDialog progressDialog;
 	
@@ -54,9 +54,9 @@ public class ArFieldListFragment extends ListFragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		content = new ArrayAdapter<DummyContent.DummyItem>(getActivity(),
+		content = new ArrayAdapter<DataField.DataItem>(getActivity(),
 				android.R.layout.simple_list_item_activated_1,
-				android.R.id.text1, DummyContent.ITEMS);
+				android.R.id.text1, DataField.ITEMS);
 		
 		setListAdapter(content);
 		
@@ -108,7 +108,7 @@ public class ArFieldListFragment extends ListFragment {
 
 		// Notify the active callbacks interface (the activity, if the
 		// fragment is attached to one) that an item has been selected.
-		mCallbacks.onItemSelected(DummyContent.ITEMS.get(position).id);
+		mCallbacks.onItemSelected(DataField.ITEMS.get(position).id);
 	}
 
 	@Override
@@ -144,7 +144,7 @@ public class ArFieldListFragment extends ListFragment {
 	
 	public void onCompleteTask(ArrayList<String[]> data) {
 		for(String[] arr : data) {
-			DummyContent.addItem(arr[1]);
+			DataField.addItem(arr[1]);
 		}
 		
 		content.notifyDataSetChanged();

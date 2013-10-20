@@ -7,7 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import polar.obsessive.dummy.DummyContent;
+import polar.obsessive.data.DataField;
+import polar.obsessive.data.DataField;
 
 /**
  * A fragment representing a single ArField detail screen. This fragment is
@@ -21,10 +22,7 @@ public class ArFieldDetailFragment extends Fragment {
 	 */
 	public static final String ARG_ITEM_ID = "item_id";
 
-	/**
-	 * The dummy content this fragment is presenting.
-	 */
-	private DummyContent.DummyItem mItem;
+	private DataField.DataItem mItem;
 
 	/**
 	 * Mandatory empty constructor for the fragment manager to instantiate the
@@ -38,10 +36,10 @@ public class ArFieldDetailFragment extends Fragment {
 		super.onCreate(savedInstanceState);
 
 		if (getArguments().containsKey(ARG_ITEM_ID)) {
-			// Load the dummy content specified by the fragment
+			// Load the data content specified by the fragment
 			// arguments. In a real-world scenario, use a Loader
 			// to load content from a content provider.
-			mItem = DummyContent.ITEM_MAP.get(getArguments().getString(
+			mItem = DataField.ITEM_MAP.get(getArguments().getString(
 					ARG_ITEM_ID));
 		}
 	}

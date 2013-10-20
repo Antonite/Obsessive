@@ -1,13 +1,20 @@
 package polar.obsessive;
 
+import polar.obsessive.data.LocalStore;
+
 import com.facebook.Session;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.NavUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
 
 /**
  * An activity representing a list of ArFields. This activity has different
@@ -133,6 +140,22 @@ public class ArFieldListActivity extends FragmentActivity implements
 		        session.closeAndClearTokenInformation();
 		    }
 		    finish();
+			break;
+		case R.id.add_artist:
+			final EditText input = new EditText(this);
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setMessage("New Artist:");
+			builder.setView(input);
+	        builder.setPositiveButton("Add", new DialogInterface.OnClickListener() {
+	            public void onClick(DialogInterface dialog, int id) {
+	            	LocalStore.subscribedArtists.add(input.getText().toString());
+	            }
+	        })
+	        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+	            public void onClick(DialogInterface dialog, int id) {
+	            }
+	        })
+	        .create().show();
 			break;
 		}
 		return super.onMenuItemSelected(featureId, item);

@@ -1,4 +1,4 @@
-package polar.obsessive.dummy;
+package polar.obsessive.data;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,34 +11,25 @@ import java.util.Map;
  * <p>
  * TODO: Replace all uses of this class before publishing your app.
  */
-public class DummyContent {
+public class DataField {
 
-	/**
-	 * An array of sample (dummy) items.
-	 */
-	public static List<DummyItem> ITEMS = new ArrayList<DummyItem>();
+	public static List<DataItem> ITEMS = new ArrayList<DataItem>();
 
-	/**
-	 * A map of sample (dummy) items, by ID.
-	 */
-	public static Map<String, DummyItem> ITEM_MAP = new HashMap<String, DummyItem>();
+	public static Map<String, DataItem> ITEM_MAP = new HashMap<String, DataItem>();
 
 	public static void addItem(String content) {
-		DummyItem item = new DummyItem(content);
+		DataItem item = new DataItem(content);
 		ITEMS.add(item);
 		ITEM_MAP.put(item.id, item);
 	}
 
-	/**
-	 * A dummy item representing a piece of content.
-	 */
-	public static class DummyItem {
+	public static class DataItem {
 		public String id;
 		public String content;
 		
 		private static int nextId = 0;
 
-		public DummyItem(String content) {
+		public DataItem(String content) {
 			this.id = Integer.toString(nextId++);
 			this.content = content;
 		}

@@ -2,7 +2,6 @@ package polar.obsessive;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
 
 import com.facebook.Session;
 import com.facebook.SessionState;
@@ -11,11 +10,7 @@ import com.facebook.widget.LoginButton;
 
 import polar.obsessive.R;
 import android.os.Bundle;
-import android.app.Activity;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Context;
+import android.os.StrictMode;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -30,7 +25,9 @@ import android.view.Window;
 
 public class MainActivity extends FragmentActivity {
 	
-	private NotificationManager notificationManager;
+	private NotificationHelper notifyMan;
+	private UiLifecycleHelper uiHelper;
+	private Cron cronTab;
 	
 	private Session.StatusCallback callback = new Session.StatusCallback() {
 	    @Override
@@ -39,18 +36,39 @@ public class MainActivity extends FragmentActivity {
 	    }
 	};
 	
-	private UiLifecycleHelper uiHelper;
+/*
+ * REMOVE ME LATER	
+ */
+
+	public void startCron(View v){
+		Log.i("alarm", "STARTING!!!");
+		cronTab.SetCron(this, 5);
+	}
+	
+	public void stopCron(View v){
+		Log.i("alarm", "ENDING!!!");
+		cronTab.CancelCron(this);
+	}
+	
+	public void testImage(View v){
+		Bitmap mBit = notifyMan.convertURLtoBitmap("http://www.eminemlab.com/images/wallpapers/Eminem-01-1024x768b.jpg");
+		notifyMan.notify("New Album!!", "Eminem is releasing a new Album on 11/25/2013!", mBit, null);
+	}
+	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+		StrictMode.setThreadPolicy(policy);
+		cronTab = new Cron();
 		
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		
 		setContentView(R.layout.splash);
 
 		//setContentView(R.layout.activity_main);
-		notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+		notifyMan = new NotificationHelper(this);
 
 		 uiHelper = new UiLifecycleHelper(this, callback);
 		 uiHelper.onCreate(savedInstanceState);
@@ -72,32 +90,16 @@ public class MainActivity extends FragmentActivity {
 		    }
 	}
 	
-	public void createNotification(View v){
-		notify("New Album!!", "Eminem is releasing a new Album on 11/25/2013!");
-	}
 	
-	// creates a notification with default app-icon in case IMG-URL was not found/not provided
-	public void notify(String contentTitle, String contentText){
-		Intent intent = new Intent(this, MainActivity.class);
-		PendingIntent pIntent = PendingIntent.getActivity(this, 0, intent, 0);
-		// notification image subject to change
-		long when = System.currentTimeMillis();
-		Notification n  = new Notification(R.drawable.obsessive_icon, contentTitle, when);
-		n.setLatestEventInfo(this, contentTitle, contentText, pIntent);
-		notificationManager.notify(0,n);
+	@Override
+	protected void onResumeFragments() {
+		Session session = Session.getActiveSession();
+		if (session != null && (session.isOpened() || session.isClosed()) ) {
+	        onSessionStateChange(session, session.getState(), null);
+	    }
+		super.onResumeFragments();
 	}
-	
-	// creates a notification with provided bitmap picture (album)
-	public void notify(String contentTitle, String contentText, Bitmap largeIcon){
-		Intent intent = new Intent(this, MainActivity.class);
-		PendingIntent pIntent = PendingIntent.getActivity(this, 0, intent, 0);
-		// notification image subject to change
-		long when = System.currentTimeMillis();
-		Notification n  = new Notification(R.drawable.obsessive_icon, contentTitle, when);
-		n.largeIcon = largeIcon;
-		n.setLatestEventInfo(this, contentTitle, contentText, pIntent);
-		notificationManager.notify(0,n);
-	}
+
 	
 	private void onSessionStateChange(Session session, SessionState state, Exception exception) {
 		
@@ -106,7 +108,6 @@ public class MainActivity extends FragmentActivity {
 	    if (state.isOpened()) {
 	    	startActivity(new Intent(MainActivity.this, ArFieldListActivity.class)); 
 	    } else if (state.isClosed()) {
-	        Log.i("INFO", "Logged out...");
 	    }
 	}
 	

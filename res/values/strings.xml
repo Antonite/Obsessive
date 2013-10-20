@@ -6,5 +6,7 @@
     <string name="hello_world">Hello world!</string>
     <string name="title_arfield_list">ArFields</string>
     <string name="title_arfield_detail">ArField Detail</string>
+    
+    <string name="get_started">To get started, log in using Facebook</string>
 
 </resources>

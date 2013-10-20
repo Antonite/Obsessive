@@ -95,8 +95,8 @@ public class ArFieldDetailFragment extends ListFragment {
 	 
 	    public View getView(int position, View convertView, ViewGroup parent) {
 	        View vi=convertView;
-	    	ArrayList<Album> albums = LocalStore.updates.get(artist);
-	    	if(albums != null && albums.size()>0) {
+//	    	ArrayList<Album> albums = LocalStore.updates.get(artist);
+//	    	if(albums != null && albums.size()>0) {
 	        if(convertView==null)
 	            vi = inflater.inflate(R.layout.detail_row, null);
 	 
@@ -107,27 +107,27 @@ public class ArFieldDetailFragment extends ListFragment {
 //	        TextView album = (TextView)vi.findViewById(R.id.album);
 	        ImageView thumb_image = (ImageView)vi.findViewById(R.id.album_image);
 	 
-	        Album a = LocalStore.updates.get(artist).get(position);
+//	        Album a = LocalStore.updates.get(artist).get(position);
 	        
-	        String adate = a.date;
-	        int mon = Integer.parseInt(adate.substring(5,7));
-	        String dai = adate.substring(8);
+//	        String adate = a.date;
+//	        int mon = Integer.parseInt(adate.substring(5,7));
+//	        String dai = adate.substring(8);
 	        
-	        String[] months = new String[] {"January","February","March","April","May","June","July","August","September","October","November","December"};
+//	        String[] months = new String[] {"January","February","March","April","May","June","July","August","September","October","November","December"};
 	        
-	        date.setText(months[mon-1] + " " + dai);
+	        date.setText("October 24");
 	        datetxt.setText(datetxt.getText());
 	        
-	        artist.setText(a.title);
+	        artist.setText("Hybrid Theory");
 	        artisttxt.setText(artisttxt.getText());
 
-	        thumb_image.setImageBitmap(NotificationHelper.convertURLtoDisplayBitmap(a.img));
-	    	}
-	    	else {
-	    		 vi = inflater.inflate(R.layout.empty_view, null);
-	    		 TextView emptymsg = (TextView)vi.findViewById(R.id.empty_msg);
-	    		 emptymsg.setText(emptymsg.getText());
-	    	}
+	        thumb_image.setImageBitmap(NotificationHelper.convertURLtoDisplayBitmap("http://upload.wikimedia.org/wikipedia/en/c/c9/Linkin_park_hybrid_theory.jpg"));
+//	    	}
+//	    	else {
+//	    		 vi = inflater.inflate(R.layout.empty_view, null);
+//	    		 TextView emptymsg = (TextView)vi.findViewById(R.id.empty_msg);
+//	    		 emptymsg.setText(emptymsg.getText());
+//	    	}
 	        return vi;
 	    }
 	}

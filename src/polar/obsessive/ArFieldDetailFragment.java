@@ -7,11 +7,13 @@ import polar.obsessive.data.LocalStore.Album;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 /**
@@ -40,7 +42,8 @@ public class ArFieldDetailFragment extends ListFragment {
 
 		if (getArguments().containsKey(ARG_ITEM_ID)) {
 			LocalStore.ensure(getActivity());
-			content = new LazyAdapter(getArguments().getString(ARG_ITEM_ID));
+			String artist = getArguments().getString(ARG_ITEM_ID);
+			content = new LazyAdapter(artist);
 			setListAdapter(content);
 		}
 
@@ -76,10 +79,10 @@ public class ArFieldDetailFragment extends ListFragment {
 	 
 	    public int getCount() {
 	    	ArrayList<Album> albums = LocalStore.updates.get(artist);
-	    	if(albums != null) {
-	    		return LocalStore.updates.get(artist).size();
+	    	if(albums != null && albums.size()>0) {
+	    		return albums.size();
 	    	}
-	    	return 0;
+	    	return 1;
 	    }
 	 
 	    public Object getItem(int position) {
@@ -92,6 +95,8 @@ public class ArFieldDetailFragment extends ListFragment {
 	 
 	    public View getView(int position, View convertView, ViewGroup parent) {
 	        View vi=convertView;
+	    	ArrayList<Album> albums = LocalStore.updates.get(artist);
+	    	if(albums != null && albums.size()>0) {
 	        if(convertView==null)
 	            vi = inflater.inflate(R.layout.detail_row, null);
 	 
@@ -117,6 +122,12 @@ public class ArFieldDetailFragment extends ListFragment {
 	        artisttxt.setText(artisttxt.getText());
 
 	        thumb_image.setImageBitmap(NotificationHelper.convertURLtoDisplayBitmap(a.img));
+	    	}
+	    	else {
+	    		 vi = inflater.inflate(R.layout.empty_view, null);
+	    		 TextView emptymsg = (TextView)vi.findViewById(R.id.empty_msg);
+	    		 emptymsg.setText(emptymsg.getText());
+	    	}
 	        return vi;
 	    }
 	}

@@ -1,29 +1,18 @@
 package polar.obsessive;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
-
 import com.facebook.Session;
 import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
-import com.facebook.widget.LoginButton;
 
 import polar.obsessive.R;
 import android.os.Bundle;
-import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.PackageManager.NameNotFoundException;
-import android.content.pm.Signature;
 import android.graphics.Bitmap;
 import android.support.v4.app.FragmentActivity;
-import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -52,13 +41,12 @@ public class MainActivity extends FragmentActivity {
 		//setContentView(R.layout.activity_main);
 		notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-		 uiHelper = new UiLifecycleHelper(this, callback);
-		 uiHelper.onCreate(savedInstanceState);
+		uiHelper = new UiLifecycleHelper(this, callback);
+		uiHelper.onCreate(savedInstanceState);
 
-		 LoginButton auth = (LoginButton)findViewById(R.id.login_button);
+		 /*LoginButton auth = (LoginButton)findViewById(R.id.login_button);
 		 
 		 try {
-			 Log.e("KeyHash:", "WHAT");
 		        PackageInfo info = getPackageManager().getPackageInfo("polar.obsessive", PackageManager.GET_SIGNATURES);
 		        for (Signature signature : info.signatures) {
 		            MessageDigest md = MessageDigest.getInstance("SHA");
@@ -69,7 +57,7 @@ public class MainActivity extends FragmentActivity {
 
 		    } catch (NoSuchAlgorithmException e) {
 
-		    }
+		    }*/
 	}
 	
 	
@@ -113,10 +101,9 @@ public class MainActivity extends FragmentActivity {
 		
 		Log.e("STATE", state.toString());
 		
-	    if (state.isOpened()) {
+	    if (state.isOpened() && !ArFieldListActivity.open) {
+	    	ArFieldListActivity.open = true;
 	    	startActivity(new Intent(MainActivity.this, ArFieldListActivity.class)); 
-	    } else if (state.isClosed()) {
-	        Log.i("INFO", "Logged out...");
 	    }
 	}
 	

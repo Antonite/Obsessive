@@ -2,7 +2,6 @@ package polar.obsessive;
 
 import com.facebook.Session;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -35,12 +34,19 @@ public class ArFieldListActivity extends FragmentActivity implements
 	 */
 	private boolean mTwoPane;
 
+	public static boolean open = false;
 
 	@Override
+	public void onPause() {
+		open = false;
+		super.onPause();
+	}
+	
+	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		open = true;
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_arfield_list);
-
 
 		// Show the Up button in the action bar.
 		getActionBar().setDisplayHomeAsUpEnabled(false);
@@ -126,7 +132,7 @@ public class ArFieldListActivity extends FragmentActivity implements
 		        Session.setActiveSession(session);
 		        session.closeAndClearTokenInformation();
 		    }
-		    startActivity(new Intent(ArFieldListActivity.this, MainActivity.class));
+		    finish();
 			break;
 		}
 		return super.onMenuItemSelected(featureId, item);

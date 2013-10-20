@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import polar.obsessive.data.DataField;
+import polar.obsessive.data.LocalStore;
 
 public class ArFieldListFragment extends ListFragment {
 
@@ -27,6 +28,7 @@ public class ArFieldListFragment extends ListFragment {
 
 	private ArrayAdapter<DataField.DataItem> content;
 	
+	private static boolean initialized = false;
 	private ProgressDialog progressDialog;
 	
 	public interface Callbacks {
@@ -61,11 +63,27 @@ public class ArFieldListFragment extends ListFragment {
 		setListAdapter(content);
 		
 		// Fire async task
-		ReadDataAsyncTask task = new ReadDataAsyncTask();
-		task.execute();
+		LocalStore.ensure(getActivity());
 		
-		// Start InProgress dialog
-		progressDialog = ProgressDialog.show(ArFieldListFragment.this.getActivity(), "", "Loading. Please wait...", true);
+		if(LocalStore.cachedPage == null) {
+			ReadDataAsyncTask task = new ReadDataAsyncTask();
+			task.execute();
+			progressDialog = ProgressDialog.show(ArFieldListFragment.this.getActivity(), "", "Loading. Please wait...", true);
+		} else {
+			onCompleteTask(LocalStore.cachedPage);
+		}
+	}
+	
+	@Override
+	public void onPause() {
+		LocalStore.save(getActivity());
+		super.onPause();
+	}
+	
+	@Override
+	public void onDestroy() {
+		LocalStore.save(getActivity());
+		super.onDestroy();
 	}
 
 	@Override
@@ -143,14 +161,16 @@ public class ArFieldListFragment extends ListFragment {
 	}
 	
 	public void onCompleteTask(ArrayList<String[]> data) {
+		DataField.clear();
 		for(String[] arr : data) {
 			DataField.addItem(arr[1]);
 		}
 		
 		content.notifyDataSetChanged();
 		
-		progressDialog.dismiss();
-		
+		if(progressDialog != null) {
+			progressDialog.dismiss();
+		}
 	}
 	
 	private class ReadDataAsyncTask extends AsyncTask<String, Integer, ArrayList<String[]>> { 
@@ -168,6 +188,7 @@ public class ArFieldListFragment extends ListFragment {
 					result.add(line.split(","));
 					line = bf.readLine();
 				}
+				bf.close();
 				return result;
 			} catch (MalformedURLException e) {
 				e.printStackTrace();
@@ -180,6 +201,7 @@ public class ArFieldListFragment extends ListFragment {
 		@Override
 		protected void onPostExecute(ArrayList<String[]> result) {
 			super.onPostExecute(result);
+			LocalStore.cachedPage = result;
 			ArFieldListFragment.this.onCompleteTask(result);
 		}
 	}

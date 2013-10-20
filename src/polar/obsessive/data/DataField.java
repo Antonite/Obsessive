@@ -23,6 +23,13 @@ public class DataField {
 		ITEM_MAP.put(item.id, item);
 	}
 
+	public static void clear() {
+		for(DataItem item : ITEMS) {
+			ITEM_MAP.remove(item.id);
+		}
+		ITEMS.clear();
+	}
+	
 	public static class DataItem {
 		public String id;
 		public String content;

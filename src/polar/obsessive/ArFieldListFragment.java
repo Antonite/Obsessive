@@ -6,16 +6,22 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ArrayAdapter;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import polar.obsessive.data.DataField;
+import polar.obsessive.data.DataField.DataItem;
 
 public class ArFieldListFragment extends ListFragment {
 
@@ -25,7 +31,8 @@ public class ArFieldListFragment extends ListFragment {
 	
 	private int mActivatedPosition = ListView.INVALID_POSITION;
 
-	private ArrayAdapter<DataField.DataItem> content;
+	private LazyAdapter content;
+//	private ArrayAdapter<DataField.DataItem> content;
 	
 	private ProgressDialog progressDialog;
 	
@@ -54,9 +61,12 @@ public class ArFieldListFragment extends ListFragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		content = new ArrayAdapter<DataField.DataItem>(getActivity(),
-				android.R.layout.simple_list_item_activated_1,
-				android.R.id.text1, DataField.ITEMS);
+		//content = new ArrayAdapter<DataField.DataItem>(getActivity(),
+		//		android.R.layout.simple_list_item_activated_1,
+		//		android.R.id.text1, DataField.ITEMS);
+		
+		content = new LazyAdapter(DataField.ITEMS);
+		
 		
 		setListAdapter(content);
 		
@@ -144,7 +154,7 @@ public class ArFieldListFragment extends ListFragment {
 	
 	public void onCompleteTask(ArrayList<String[]> data) {
 		for(String[] arr : data) {
-			DataField.addItem(arr[1]);
+			DataField.addItem(arr[0],arr[1],arr[2]);
 		}
 		
 		content.notifyDataSetChanged();
@@ -183,4 +193,49 @@ public class ArFieldListFragment extends ListFragment {
 			ArFieldListFragment.this.onCompleteTask(result);
 		}
 	}
+	
+	public class LazyAdapter extends BaseAdapter {
+		 
+	    private List<DataItem> data;
+	    private LayoutInflater inflater=null;
+//	    public ImageLoader imageLoader;
+	 
+	    public LazyAdapter(List<DataItem> iTEMS) {
+	        data=iTEMS;
+	        inflater = (LayoutInflater)ArFieldListFragment.this.getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+	      //  imageLoader=new ImageLoader(activity.getApplicationContext());
+	    }
+	 
+	    public int getCount() {
+	        return data.size();
+	    }
+	 
+	    public Object getItem(int position) {
+	        return position;
+	    }
+	 
+	    public long getItemId(int position) {
+	        return position;
+	    }
+	 
+	    public View getView(int position, View convertView, ViewGroup parent) {
+	        View vi=convertView;
+	        if(convertView==null)
+	            vi = inflater.inflate(R.layout.list_row, null);
+	 
+	        TextView title = (TextView)vi.findViewById(R.id.date); // title
+	        TextView artist = (TextView)vi.findViewById(R.id.artist); // artist name
+	        TextView duration = (TextView)vi.findViewById(R.id.album); // duration
+	        //ImageView thumb_image=(ImageView)vi.findViewById(R.id.list_image); // thumb image
+	 
+	        // Setting all values in listview
+	        title.setText(data.get(position).date);
+	        artist.setText(data.get(position).artist);
+	        duration.setText(data.get(position).album);
+	      //  imageLoader.DisplayImage(song.get(CustomizedListView.KEY_THUMB_URL), thumb_image);
+	        return vi;
+	    }
+	}
+	
 }
+

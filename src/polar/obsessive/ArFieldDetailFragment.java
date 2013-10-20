@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import polar.obsessive.data.DataField;
-import polar.obsessive.data.DataField;
 
 /**
  * A fragment representing a single ArField detail screen. This fragment is
@@ -53,7 +52,7 @@ public class ArFieldDetailFragment extends Fragment {
 		// Show the dummy content as text in a TextView.
 		if (mItem != null) {
 			((TextView) rootView.findViewById(R.id.arfield_detail))
-					.setText(mItem.content);
+					.setText(mItem.album);
 		}
 
 		return rootView;

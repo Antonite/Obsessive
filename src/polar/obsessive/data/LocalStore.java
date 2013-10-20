@@ -5,16 +5,24 @@ import java.io.DataOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import android.content.Context;
 
 public class LocalStore {
+	
+	public static class Album {
+		String date;
+		String title;
+		String img;
+	}
 	
 	private final static long CACHE_TIME_DELAY = 10*60*1000; 
 	
 	private static boolean loaded = false;
 	public static long lastUpdate;
 	public static ArrayList<String> subscribedArtists;
+	public static HashMap<String, ArrayList<Album>> updates;
 	
 	public static ArrayList<String[]> cachedPage;
 	
@@ -26,12 +34,14 @@ public class LocalStore {
 	
 	public static void init() {
 		subscribedArtists = new ArrayList<String>();
+		updates = new HashMap<String, ArrayList<Album>>();
 		lastUpdate = -1;
 		loaded = true;
 	}
 	
 	public static void load(Context c) {
 		DataInputStream fis;
+		init();
 		try {
 			fis = new DataInputStream(c.openFileInput("artists.txt"));
 			
@@ -43,6 +53,28 @@ public class LocalStore {
 				fis.read(buf);
 				String artist = new String(buf);
 				subscribedArtists.add(artist);
+				
+				ArrayList<Album> albums = new ArrayList<Album>(); 
+				updates.put(artist, albums);
+				
+				int albumCount = fis.readInt();
+				for(int j=0; j < albumCount; ++j) {
+					Album a = new Album();
+					
+					buf = new byte[fis.readInt()];
+					fis.read(buf);
+					a.date = new String(buf);
+					
+					buf = new byte[fis.readInt()];
+					fis.read(buf);
+					a.title = new String(buf);
+					
+					buf = new byte[fis.readInt()];
+					fis.read(buf);
+					a.img = new String(buf);
+					
+					albums.add(a);
+				}
 			}
 			
 			if(lastUpdate + CACHE_TIME_DELAY < System.currentTimeMillis()) {
@@ -71,7 +103,6 @@ public class LocalStore {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		init();
 	}
 	
 	public static void save(Context c) {
@@ -90,6 +121,25 @@ public class LocalStore {
 					byte[] buf = artist.getBytes();
 					fos.writeInt(buf.length);
 					fos.write(buf);
+					
+					ArrayList<Album> albums = updates.get(artist);
+					if(albums == null) {
+						fos.writeInt(0);
+					} else {
+						for(Album a : albums) {
+							buf = a.date.getBytes();
+							fos.writeInt(buf.length);
+							fos.write(buf);
+							
+							buf = a.title.getBytes();
+							fos.writeInt(buf.length);
+							fos.write(buf);
+							
+							buf = a.img.getBytes();
+							fos.writeInt(buf.length);
+							fos.write(buf);
+						}
+					}
 				}
 			}
 			

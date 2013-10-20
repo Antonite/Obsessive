@@ -1,7 +1,5 @@
 package polar.obsessive;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import com.facebook.Session;
 import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
